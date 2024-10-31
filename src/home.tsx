@@ -60,6 +60,13 @@ const Home = () => {
               </button>
             </div>
 
+            {/* button to navigate to shortcuts page */}
+            <div className="shortcuts-button">
+              <button onClick={() => navigate('/shortcuts')} className="shortcuts-nav-button" style={{ fontSize: 'var(--button-font-size)' }}>
+                Shortcuts
+              </button>
+            </div>
+
             <div className="more-services">
               <p>More services</p>
               <p className="more-link">FAQs &gt;</p>
