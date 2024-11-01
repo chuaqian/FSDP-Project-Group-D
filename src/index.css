@@ -261,8 +261,13 @@ body {
   margin-bottom: 5px; 
 }
 
-.select-box {
+/* for shortcuts page */
+.select-box1 {
   width: 200px; 
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 20px;
   padding: 8px;
 }
 
@@ -271,7 +276,7 @@ body {
 }
 
 .transaction-container {
-  flex: 0 0 450px; /* Fixed width for the transaction container on the right */
+  flex: 0 0 450px; 
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -282,11 +287,11 @@ body {
 }
 
 .transaction-box {
-  background-color: #9ca3af; /* Light grey background */
+  background-color: #9ca3af; 
   padding: 10px;
   border-radius: 4px;
-  width: 180px; /* Full width */
-  font-size: 16px; /* Font size for transaction info */
-  color: #ffffff; /* Text color */
+  width: 180px;
+  font-size: 16px; 
+  color: #ffffff; 
   margin-bottom: 8px;
 }

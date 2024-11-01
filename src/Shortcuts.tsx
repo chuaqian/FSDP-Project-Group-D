@@ -48,7 +48,7 @@ const Shortcuts: React.FC = () => {
         {/* Dropdown for transaction type */}
         <div className="transaction-dropdown">
           <label className="label">Select Transaction Type:</label>
-          <select value={transactionType} onChange={(e) => setTransactionType(e.target.value)} className="select-box">
+          <select value={transactionType} onChange={(e) => setTransactionType(e.target.value)} className="select-box1">
             <option value="Cash Withdrawal">Cash Withdrawal</option>
             <option value="Fund Transfer">Fund Transfer</option>
           </select>
@@ -61,7 +61,7 @@ const Shortcuts: React.FC = () => {
             type="number"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            className="select-box"
+            className="select-box1"
             placeholder="Enter amount here"
           />
         </div>
