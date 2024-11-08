@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import OCBCLogo from './images/OCBC Logo.png';
+import WatsonChat from './WatsonChat';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -75,6 +76,7 @@ const Home = () => {
           </div>
         </div>
       </div>
+      <WatsonChat /> {/* Add Watson Chat component here */}
     </div>
   );
 };

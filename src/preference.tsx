@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import OCBCLogo from './images/OCBC Logo.png';
+import WatsonChat from './WatsonChat';
 
 const Preference = () => {
   // state variables for user preferences with default values
@@ -104,6 +105,7 @@ const Preference = () => {
         {/* save preferences button */}
         <button onClick={handleSave} className="save-button">Save Preferences</button>
       </div>
+      <WatsonChat /> {/* Add Watson Chat component here */}
     </div>
   );
 };

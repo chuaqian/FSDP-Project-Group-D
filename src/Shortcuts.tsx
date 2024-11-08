@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import OCBCLogo from './images/OCBC Logo.png';
+import WatsonChat from './WatsonChat';
 
 const Shortcuts: React.FC = () => {
   const [theme, setTheme] = useState('light');
@@ -70,6 +71,7 @@ const Shortcuts: React.FC = () => {
         <button onClick={handleSave} className="save-button">Add</button>
       </div>
     </div>
+    <WatsonChat /> {/* Add Watson Chat component here */}
   </div>
   );
 };
