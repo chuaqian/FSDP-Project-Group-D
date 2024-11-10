@@ -10,8 +10,10 @@
   --welcome-text-color: #000000;
   --cash-button-hover: #1f2937;
   --button-font-size: 16px;
-  --font-family: 'Inter', sans-serif; /* default font */
-  --font-weight: 400; /* default weight */
+  --font-family: 'Inter', sans-serif;
+  --font-weight: 400;
+  --link-color-light: #1d4ed8; /* link color in light mode */
+  --link-color-dark: #93c5fd;  /* link color in dark mode */
 }
 
 /* apply global font family and font weight */
@@ -38,7 +40,7 @@ body {
   position: fixed;
   top: 20px;
   left: 20px;
-  width: 150px; /* increased logo size */
+  width: 150px;
   height: auto;
   z-index: 1000;
 }
@@ -60,30 +62,11 @@ body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.home-content1 {
-  display: flex;
-  flex-direction: row; /* Align elements horizontally */
-  align-items: flex-start; /* Align items to the top */
-  justify-content: space-between; /* Add space between home-grid1 and transaction-container */
-  width: 100%;
-  max-width: 900px;
-  background-color: #ffffff;
-  border-radius: 8px;
-  padding: 30px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
 /* grid layout for home page */
 .home-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
-}
-
-.home-grid1 {
-  flex: 1; /* Allow home-grid1 to take available space on the left */
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
 }
 
 /* cash options styling */
@@ -99,6 +82,16 @@ body {
   color: var(--welcome-text-color);
 }
 
+/* styling for the "More services", "FAQs", and "Customize" links */
+.more-link {
+  color: var(--link-color-light); /* default link color for light mode */
+  cursor: pointer;
+}
+
+.dark-theme .more-link {
+  color: var(--link-color-dark); /* link color for dark mode */
+}
+
 /* cash buttons styling */
 .cash-buttons {
   display: grid;
@@ -111,7 +104,7 @@ body {
   color: var(--button-text-color);
   padding: 15px;
   border-radius: 8px;
-  font-size: var(--button-font-size); /* dynamic font size */
+  font-size: var(--button-font-size);
   cursor: pointer;
   border: none;
   transition: background-color 0.2s;
@@ -222,6 +215,55 @@ body {
   background-color: #b91c1c;
 }
 
+/* styling for live preview */
+
+.live-preview {
+  margin-top: 30px;
+}
+
+.preview-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  text-align: center;
+}
+
+.home-preview-container {
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: var(--background-light);
+  max-width: 300px;
+  margin: auto;
+}
+
+.preview-welcome {
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.preview-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.preview-cash-button {
+  border: 1px solid var(--text-color-light);
+}
+
+.preview-cash-button.dark-theme {
+  background-color: #555;
+  color: #fff;
+}
+
+.preview-container {
+  width: 80%;
+  margin: auto;
+}
+/* end of preview ------------------------------------------------------------------------------------------------------------*/ 
 /* shortcts navigation button */
 .shortcuts-nav-button {
   background-color: #eb2532;

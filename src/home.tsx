@@ -1,7 +1,7 @@
+// home.tsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import OCBCLogo from './images/OCBC Logo.png';
-import WatsonChat from './WatsonChat';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -9,6 +9,7 @@ const Home = () => {
   const [font, setFont] = useState('Inter');
   const [fontWeight, setFontWeight] = useState('normal');
   const [iconSize, setIconSize] = useState('medium');
+  const [textToSpeech, setTextToSpeech] = useState(false); // default TTS to disabled
 
   // load saved preferences from localStorage when the component mounts
   useEffect(() => {
@@ -16,13 +17,15 @@ const Home = () => {
     const savedFont = localStorage.getItem('font') || 'Inter';
     const savedFontWeight = localStorage.getItem('fontWeight') || 'normal';
     const savedIconSize = localStorage.getItem('iconSize') || 'medium';
+    const savedTextToSpeech = localStorage.getItem('textToSpeech') === 'enabled';
 
-    // apply saved preferences to state and document styling
     setTheme(savedTheme);
     setFont(savedFont);
     setFontWeight(savedFontWeight);
     setIconSize(savedIconSize);
+    setTextToSpeech(savedTextToSpeech);
 
+    // apply the saved preferences to document styling
     document.documentElement.setAttribute('data-theme', savedTheme);
     document.documentElement.style.fontFamily = savedFont;
     document.documentElement.style.fontWeight = savedFontWeight === 'bold' ? '700' : '400';
@@ -32,6 +35,36 @@ const Home = () => {
     document.documentElement.style.setProperty('--button-font-size', buttonSize);
   }, []);
 
+  // function to trigger text-to-speech for a given text if TTS is enabled
+  const speak = (text: string) => {
+    if (textToSpeech && 'speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.cancel(); // cancel any ongoing speech to avoid overlap
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
+  // handle single-click for text elements to trigger TTS
+  const handleTextClick = (text: string) => {
+    if (textToSpeech) speak(text); // only activate TTS if enabled
+  };
+
+  // handle double-click for button actions when TTS is enabled
+  const handleButtonClick = (label: string, action: () => void) => {
+    if (textToSpeech) {
+      // with TTS enabled, require double-click to activate
+      return {
+        onClick: () => handleTextClick(label),
+        onDoubleClick: action,
+      };
+    } else {
+      // without TTS, single-click activates button action directly
+      return {
+        onClick: action,
+      };
+    }
+  };
+
   return (
     <div className={`home-container ${theme === 'dark' ? 'dark-theme' : 'light-theme'}`}>
       <img src={OCBCLogo} alt="OCBC Logo" className="fixed-logo large-logo" />
@@ -39,44 +72,93 @@ const Home = () => {
         <div className="home-grid">
           {/* cash options section */}
           <div className="cash-options">
-            <h1 className="welcome-text">Hello! <br /> What would you like to do today?</h1>
+            <h1 
+              className="welcome-text" 
+              onClick={() => handleTextClick("Hello! What would you like to do today?")}
+            >
+              Hello! <br /> What would you like to do today?
+            </h1>
             <div className="cash-buttons">
-              <button className="cash-button" style={{ fontSize: 'var(--button-font-size)' }}>$50</button>
-              <button className="cash-button" style={{ fontSize: 'var(--button-font-size)' }}>$80</button>
-              <button className="cash-button" style={{ fontSize: 'var(--button-font-size)' }}>$100</button>
-              <button className="cash-button" style={{ fontSize: 'var(--button-font-size)' }}>$500</button>
+              {['$50', '$80', '$100', '$500'].map((amount) => (
+                <button
+                  key={amount}
+                  {...handleButtonClick(amount, () => console.log(`${amount} activated`))} // handle single or double click based on TTS
+                  className="cash-button"
+                  style={{ fontSize: 'var(--button-font-size)' }}
+                >
+                  {amount}
+                </button>
+              ))}
             </div>
-            <button className="other-cash-button" style={{ fontSize: 'var(--button-font-size)' }}>Other cash amounts</button>
+            <button 
+              className="other-cash-button" 
+              {...handleButtonClick('Other cash amounts', () => console.log('Other cash amounts activated'))}
+              style={{ fontSize: 'var(--button-font-size)' }}
+            >
+              Other cash amounts
+            </button>
           </div>
 
           {/* other services section */}
           <div className="non-cash-services">
-            <div className="service-box">Deposit Cash</div>
-            <div className="service-box">Ask about Balance</div>
+            <div 
+              className="service-box" 
+              onClick={() => handleTextClick('Deposit Cash')}
+            >
+              Deposit Cash
+            </div>
+            <div 
+              className="service-box" 
+              onClick={() => handleTextClick('Ask about Balance')}
+            >
+              Ask about Balance
+            </div>
 
             {/* button to navigate to preferences page */}
             <div className="preferences-button">
-              <button onClick={() => navigate('/preferences')} className="preference-nav-button" style={{ fontSize: 'var(--button-font-size)' }}>
+              <button 
+                {...handleButtonClick('Preferences', () => navigate('/preferences'))}
+                className="preference-nav-button"
+                style={{ fontSize: 'var(--button-font-size)' }}
+              >
                 Preferences
               </button>
             </div>
 
             {/* button to navigate to shortcuts page */}
             <div className="shortcuts-button">
-              <button onClick={() => navigate('/shortcuts')} className="shortcuts-nav-button" style={{ fontSize: 'var(--button-font-size)' }}>
+              <button 
+                {...handleButtonClick('Shortcuts', () => navigate('/shortcuts'))}
+                className="shortcuts-nav-button"
+                style={{ fontSize: 'var(--button-font-size)' }}
+              >
                 Shortcuts
               </button>
             </div>
 
             <div className="more-services">
-              <p>More services</p>
-              <p className="more-link">FAQs &gt;</p>
-              <p className="more-link">Customise &gt;</p>
+              <p 
+                className="more-link" 
+                onClick={() => handleTextClick('More services')}
+              >
+                More services
+              </p>
+              <p 
+                className="more-link" 
+                onClick={() => handleTextClick('FAQs')}
+              >
+                FAQs &gt;
+              </p>
+              <p 
+                className="more-link" 
+                onClick={() => handleTextClick('Customise')}
+              >
+                Customise &gt;
+              </p>
             </div>
           </div>
         </div>
       </div>
-      <WatsonChat /> {/* Add Watson Chat component here */}
     </div>
   );
 };
