@@ -5,9 +5,9 @@ import Preference from './preference';
 import Shortcuts from './Shortcuts';
 import QRScanner from './QRScanner';
 import Home from './home'; // import Home page
-import WatsonChat from './WatsonChat';
 import LandingPage from './LandingPage';
 import CardLogin from './CardLogin';
+import WatsonChat from './WatsonChat';
 import './index.css';
 
 createRoot(document.getElementById('root')!).render(
@@ -18,6 +18,7 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/Home" element={<Home />} />
         <Route path="/preferences" element={<Preference />} />
         <Route path="/shortcuts" element={<Shortcuts />} /> 
+        <Route path="/QRScanner" element={<QRScanner />} />
         <Route path="/watsonchat" element={<WatsonChat />} /> 
         <Route path="/QRScanner" element={<QRScanner />} />
       </Routes>

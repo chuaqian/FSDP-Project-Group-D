@@ -71,7 +71,7 @@ const Preference = () => {
     localStorage.setItem('fontWeight', previewSettings.fontWeight);
     localStorage.setItem('iconSize', previewSettings.iconSize);
     localStorage.setItem('textToSpeech', previewSettings.textToSpeech ? 'enabled' : 'disabled');
-    navigate('/Home');
+    navigate('/HomeHome');
   };
 
   // update preview settings

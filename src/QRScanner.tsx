@@ -4,8 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import ocbcimg from "./images/OCBC-Logo.png";
 import CryptoJS from "crypto-js";
-import { db } from "./firebaseConfig";
+import { db } from "./firebase"; // Import Firestore instance
 
+// Function to generate token based on userID and timestamp
 const SECRET_KEY = import.meta.env.VITE_SECRET_KEY;
 const generateToken = (userID: string, timestamp: number) => {
   const message = `${userID}:${timestamp}`;
@@ -14,16 +15,17 @@ const generateToken = (userID: string, timestamp: number) => {
 
 export default function QRScanner() {
   const navigate = useNavigate();
-  const scannerId = "qr-reader";
 
   const onScanSuccess = async (decodedText: string) => {
     try {
       const { userID, token, timestamp } = JSON.parse(decodedText);
 
-      const currentTimestamp = Math.floor(Date.now() / 10000);
+      // Validate the token and timestamp
+      const currentTimestamp = Math.floor(Date.now() / 10000); // 10-second intervals
       const expectedToken = generateToken(userID, timestamp);
 
       if (expectedToken === token && Math.abs(currentTimestamp - timestamp) <= 1) {
+        // Check if the userID exists in Firestore
         const userRef = doc(db, "users", userID);
         const userDoc = await getDoc(userRef);
 
@@ -41,37 +43,31 @@ export default function QRScanner() {
     }
   };
 
+  // Initialize the QR scanner
   useEffect(() => {
-    let scanner = new Html5QrcodeScanner(
-      scannerId,
+    const scanner = new Html5QrcodeScanner(
+      "qr-reader",
       { fps: 10, qrbox: { width: 350, height: 350 } },
       false
     );
 
-    // Render the scanner
     scanner.render(onScanSuccess, (errorMessage) => {
       console.error(`QR Code scan error: ${errorMessage}`);
     });
 
     return () => {
-      // Ensure the scanner is properly stopped and cleared
-      scanner.clear().catch((error) => console.error("Failed to clear QR scanner", error));
+      scanner.clear().catch((error) => console.error("Failed to clear scanner", error));
     };
   }, []);
 
   const handleExit = () => {
-    // Clear the scanner and navigate to the home page
-    const scannerElement = document.getElementById(scannerId);
-    if (scannerElement) {
-      scannerElement.innerHTML = ""; // Clear the scanner UI
-    }
-    navigate("/");
+    navigate("/"); 
   };
 
   return (
     <div className="qr-scanner-container">
       <header className="qr-scanner-header">
-        <img src={ocbcimg} alt="OCBC Logo" className="ocbc-logo" />
+      <img src={ocbcimg} alt="OCBC Logo" className="ocbc-logo" />
         <div className="header-actions">
           <button className="language-button">中文</button>
           <button onClick={handleExit} className="exit-button">Exit</button>
@@ -81,7 +77,7 @@ export default function QRScanner() {
         <h1 className="qr-title">QR Code Login</h1>
         <p className="qr-subtext">Scan the QR code to continue</p>
       </div>
-      <div id={scannerId} className="qr-reader-box"></div>
+      <div id="qr-reader" className="qr-reader-box"></div>
     </div>
   );
 }
