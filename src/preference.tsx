@@ -52,7 +52,7 @@ const Preference = () => {
     localStorage.setItem('font', font);
     localStorage.setItem('fontWeight', fontWeight);
     localStorage.setItem('iconSize', iconSize);
-    navigate('/'); // navigate back to home page
+    navigate('/Home'); // navigate back to home page
   };
 
   return (

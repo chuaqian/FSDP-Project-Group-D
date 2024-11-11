@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --text-color-dark: #ffffff;
   --text-color-light: #333333;
@@ -294,4 +298,232 @@ body {
   font-size: 16px; 
   color: #ffffff; 
   margin-bottom: 8px;
+}
+
+/* QR Scanner Component Styles */
+.qr-scanner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f3f4f6; /* Matches bg-gray-100 */
+}
+
+.qr-scanner-header {
+  width: 100%;
+  padding: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.qr-logo {
+  height: 88px; /* Matches h-22 */
+  margin-left: 48px; /* Matches ml-12 */
+  margin-top: 48px; /* Matches mt-12 */
+}
+
+.qr-text-center {
+  text-align: center;
+  margin-top: 32px; /* Matches mt-8 */
+}
+
+.qr-title {
+  font-size: 2rem; /* Matches text-2xl */
+  margin-top: 96px; /* Matches mt-24 */
+  font-weight: bold;
+  color: #4b5563; /* Matches text-gray-700 */
+}
+
+.qr-subtext {
+  color: #6b7280; /* Matches text-gray-500 */
+  margin-top: 32px; /* Matches mt-8 */
+}
+
+.qr-reader-box {
+  margin-top: 32px; /* Matches mt-8 */
+  background-color: #ffffff;
+  padding: 24px; /* Matches p-6 */
+  border-radius: 8px; /* Matches rounded-lg */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Matches shadow-lg */
+  width: 550px;
+}
+
+.back-button {
+  background-color: #2563eb; /* Tailwind: bg-blue-600 */
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  transition: background-color 0.3s;
+  cursor: pointer;
+}
+
+.back-button:hover {
+  background-color: #1d4ed8; /* Tailwind: hover:bg-blue-700 */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.landing-page-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f3f4f6;
+  padding: 20px;
+  text-align: center;
+  position: relative;
+  width: 100%;
+}
+
+.landing-page-header {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+
+.ocbc-logo {
+  height: 88px; /* Matches h-22 */
+  margin-left: 48px; /* Matches ml-12 */
+  margin-top: 48px; /* Matches mt-12 */
+}
+
+.warning-section {
+  max-width: 900px;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.warning-section h1 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.warning-section p {
+  font-size: 1rem;
+  color: #666;
+  margin: 5px 0;
+}
+
+.button-section {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.action-button {
+  padding: 15px 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: white;
+  background-color: #1f2937;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  min-width: 200px;
+}
+
+.action-button:hover {
+  background-color: #374151;
+}
+
+/* Card Login */
+.card-login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #f3f4f6;
+  text-align: center;
+}
+
+.card-login-header {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ocbc-logo {
+  height: 40px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 15px;
+}
+
+.language-button,
+.exit-button {
+  background: none;
+  border: none;
+  color: #333;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.language-button:hover,
+.exit-button:hover {
+  color: #555;
+}
+
+.login-content {
+  margin-top: 80px;
+  text-align: center;
+}
+
+.login-content h1 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.login-content p {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.pin-inputs {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pin-input {
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  font-size: 1.5rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  transition: border-color 0.2s;
+}
+
+.pin-input:focus {
+  border-color: #2563eb; /* Blue color on focus */
+  outline: none;
 }
