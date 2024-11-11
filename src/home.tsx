@@ -1,7 +1,9 @@
 // home.tsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import OCBCLogo from './images/OCBC Logo.png';
+import { signOut } from "firebase/auth"; // Import signOut function
+import { auth } from './firebase'; // Import the auth instance
+import OCBCLogo from './images/OCBC-Logo.png';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -65,9 +67,19 @@ const Home = () => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut(auth); // Sign the user out using Firebase
+      navigate('/'); // Redirect to the login page after logout
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
   return (
     <div className={`home-container ${theme === 'dark' ? 'dark-theme' : 'light-theme'}`}>
       <img src={OCBCLogo} alt="OCBC Logo" className="fixed-logo large-logo" />
+      <button onClick={handleLogout} className="logout-button">Log Out</button>
       <div className="home-content">
         <div className="home-grid">
           {/* cash options section */}
