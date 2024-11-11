@@ -1,16 +1,15 @@
 import { useEffect } from "react";
-import { doc, getDoc } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import ocbcimg from "./images/OCBC-Logo.png";
 import CryptoJS from "crypto-js";
-import { db } from "./firebaseConfig"; // Import Firestore instance
+import { db } from "./firebaseConfig"; 
 
-// Function to generate token based on userID and timestamp
 const SECRET_KEY = import.meta.env.VITE_SECRET_KEY;
+
 const generateToken = (userID: string, timestamp: number) => {
-  const message = `${userID}:${timestamp}`;
-  return CryptoJS.HmacSHA256(message, SECRET_KEY).toString(CryptoJS.enc.Hex);
+  return CryptoJS.HmacSHA256(`${userID}:${timestamp}`, SECRET_KEY).toString(CryptoJS.enc.Hex);
 };
 
 export default function QRScanner() {
@@ -18,24 +17,25 @@ export default function QRScanner() {
 
   const onScanSuccess = async (decodedText: string) => {
     try {
-      const { userID, token, timestamp } = JSON.parse(decodedText);
+      const token = decodedText; // Only the token is in the QR code
+      const currentTimestamp = Math.floor(Date.now() / 10000); 
 
-      // Validate the token and timestamp
-      const currentTimestamp = Math.floor(Date.now() / 10000); // 10-second intervals
-      const expectedToken = generateToken(userID, timestamp);
+      // Check each possible userID in Firestore to find the matching token
+      const userRef = collection(db, "users");
+      const querySnapshot = await getDocs(userRef);
 
-      if (expectedToken === token && Math.abs(currentTimestamp - timestamp) <= 1) {
-        // Check if the userID exists in Firestore
-        const userRef = doc(db, "users", userID);
-        const userDoc = await getDoc(userRef);
+      let isUserValid = false;
 
-        if (userDoc.exists()) {
-          console.log("User verified successfully.");
-          navigate("/home", { state: { userID } });
-        } else {
-          console.error("User not found in Firestore");
+      querySnapshot.forEach((doc) => {
+        const user = doc.data();
+        const expectedToken = generateToken(user.userID, currentTimestamp);
+        if (expectedToken === token || generateToken(user.userID, currentTimestamp - 1) === token) {
+          isUserValid = true;
+          navigate("/home", { state: { userID: user.userID } });
         }
-      } else {
+      });
+
+      if (!isUserValid) {
         console.error("Invalid or expired QR code");
       }
     } catch (error) {
@@ -43,14 +43,8 @@ export default function QRScanner() {
     }
   };
 
-  // Initialize the QR scanner
   useEffect(() => {
-    const scanner = new Html5QrcodeScanner(
-      "qr-reader",
-      { fps: 10, qrbox: { width: 350, height: 350 } },
-      false
-    );
-
+    const scanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: { width: 350, height: 350 } }, false);
     scanner.render(onScanSuccess, (errorMessage) => {
       console.error(`QR Code scan error: ${errorMessage}`);
     });
@@ -67,7 +61,7 @@ export default function QRScanner() {
   return (
     <div className="qr-scanner-container">
       <header className="qr-scanner-header">
-      <img src={ocbcimg} alt="OCBC Logo" className="ocbc-logo" />
+        <img src={ocbcimg} alt="OCBC Logo" className="ocbc-logo" />
         <div className="header-actions">
           <button className="language-button">中文</button>
           <button onClick={handleExit} className="exit-button">Exit</button>
