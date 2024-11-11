@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import OCBCLogo from './images/OCBC Logo.png';
+import OCBCLogo from './images/OCBC-Logo.png';
 import { db, collection, addDoc, getDocs } from './firebaseConfig';
 import WatsonChat from './WatsonChat';
 
