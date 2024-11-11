@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import ocbcimg from "./images/OCBC-Logo.png";
 import CryptoJS from "crypto-js";
-import { db } from "./firebase"; // Import Firestore instance
+import { db } from "./firebaseConfig"; // Import Firestore instance
 
 // Function to generate token based on userID and timestamp
 const SECRET_KEY = import.meta.env.VITE_SECRET_KEY;

@@ -1,7 +1,7 @@
 // preference.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import OCBCLogo from './images/OCBC Logo.png';
+import OCBCLogo from './images/OCBC-Logo.png';
 import HomePreview from './homepreview';
 
 const Preference = () => {
@@ -71,7 +71,7 @@ const Preference = () => {
     localStorage.setItem('fontWeight', previewSettings.fontWeight);
     localStorage.setItem('iconSize', previewSettings.iconSize);
     localStorage.setItem('textToSpeech', previewSettings.textToSpeech ? 'enabled' : 'disabled');
-    navigate('/HomeHome');
+    navigate('/Home');
   };
 
   // update preview settings

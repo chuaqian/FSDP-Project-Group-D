@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signOut } from "firebase/auth"; // Import signOut function
-import { auth } from './firebase'; // Import the auth instance
+import { auth } from './firebaseConfig'; // Import the auth instance
 import OCBCLogo from './images/OCBC-Logo.png';
 
 const Home = () => {
