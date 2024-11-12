@@ -1,9 +1,20 @@
 // home.tsx
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { signOut } from "firebase/auth"; // Import signOut function
-import { auth } from './firebaseConfig'; // Import the auth instance
+import { signOut } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from './firebaseConfig';
 import OCBCLogo from './images/OCBC-Logo.png';
+import { useLocation, useNavigate } from "react-router-dom";
+
+interface UserData {
+  uid: string;
+  email: string | null;
+  displayName: string;
+}
+
+interface LocationState {
+  userID: string;
+}
 
 const Home = () => {
   const navigate = useNavigate();
@@ -11,70 +22,95 @@ const Home = () => {
   const [font, setFont] = useState('Inter');
   const [fontWeight, setFontWeight] = useState('normal');
   const [iconSize, setIconSize] = useState('medium');
-  const [textToSpeech, setTextToSpeech] = useState(false); // default TTS to disabled
+  const [textToSpeech, setTextToSpeech] = useState(false);
 
-  // load saved preferences from localStorage when the component mounts
+  const location = useLocation();
+  const state = location.state as LocationState;
+  const userID = state?.userID;
+
+  // State to store user data
+  const [user, setUser] = useState<UserData | null>(null);
+
+  // Fetch the user details if userID is provided
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    const savedFont = localStorage.getItem('font') || 'Inter';
-    const savedFontWeight = localStorage.getItem('fontWeight') || 'normal';
-    const savedIconSize = localStorage.getItem('iconSize') || 'medium';
-    const savedTextToSpeech = localStorage.getItem('textToSpeech') === 'enabled';
+    const fetchUserData = async () => {
+      if (userID) {
+        try {
+          const userRef = doc(db, "users", userID);
+          const userDoc = await getDoc(userRef);
 
-    setTheme(savedTheme);
-    setFont(savedFont);
-    setFontWeight(savedFontWeight);
-    setIconSize(savedIconSize);
-    setTextToSpeech(savedTextToSpeech);
+          if (userDoc.exists()) {
+            setUser({ uid: userID, ...userDoc.data() } as UserData);
+          } else {
+            console.error("No such user found");
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      }
+    };
 
-    // apply the saved preferences to document styling
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    document.documentElement.style.fontFamily = savedFont;
-    document.documentElement.style.fontWeight = savedFontWeight === 'bold' ? '700' : '400';
+    fetchUserData();
+  }, [userID]);
 
-    // set button font size based on icon size preference
-    const buttonSize = savedIconSize === 'large' ? '24px' : '16px';
-    document.documentElement.style.setProperty('--button-font-size', buttonSize);
-  }, []);
+  useEffect(() => {
+    const fetchPreferences = async () => {
+      if (userID) {
+        const preferencesRef = doc(db, "preferences", userID);
+        const docSnap = await getDoc(preferencesRef);
 
-  // function to trigger text-to-speech for a given text if TTS is enabled
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setTheme(data.theme);
+          setFont(data.font);
+          setFontWeight(data.fontWeight);
+          setIconSize(data.iconSize);
+          setTextToSpeech(data.textToSpeech);
+
+          // Apply the loaded preferences to document styling
+          document.documentElement.setAttribute('data-theme', data.theme);
+          document.documentElement.style.fontFamily = data.font;
+          document.documentElement.style.fontWeight = data.fontWeight === 'bold' ? '700' : '400';
+          document.documentElement.style.setProperty('--button-font-size', data.iconSize === 'large' ? '24px' : '16px');
+        }
+      }
+    };
+    fetchPreferences();
+  }, [userID]);
+
   const speak = (text: string) => {
     if (textToSpeech && 'speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(text);
-      window.speechSynthesis.cancel(); // cancel any ongoing speech to avoid overlap
+      window.speechSynthesis.cancel();
       window.speechSynthesis.speak(utterance);
     }
   };
 
-  // handle single-click for text elements to trigger TTS
   const handleTextClick = (text: string) => {
-    if (textToSpeech) speak(text); // only activate TTS if enabled
+    if (textToSpeech) speak(text);
   };
 
-  // handle double-click for button actions when TTS is enabled
   const handleButtonClick = (label: string, action: () => void) => {
     if (textToSpeech) {
-      // with TTS enabled, require double-click to activate
       return {
         onClick: () => handleTextClick(label),
         onDoubleClick: action,
       };
     } else {
-      // without TTS, single-click activates button action directly
-      return {
-        onClick: action,
-      };
+      return { onClick: action };
     }
   };
 
   const handleLogout = async () => {
     try {
-      await signOut(auth); // Sign the user out using Firebase
-      navigate('/'); // Redirect to the login page after logout
+      await signOut(auth);
+      navigate('/');
     } catch (error) {
       console.error("Logout failed:", error);
     }
   };
+  console.log("User ID in Home:", userID);
+
 
   return (
     <div className={`home-container ${theme === 'dark' ? 'dark-theme' : 'light-theme'}`}>
@@ -82,91 +118,42 @@ const Home = () => {
       <button onClick={handleLogout} className="logout-button">Log Out</button>
       <div className="home-content">
         <div className="home-grid">
-          {/* cash options section */}
           <div className="cash-options">
-            <h1 
-              className="welcome-text" 
-              onClick={() => handleTextClick("Hello! What would you like to do today?")}
-            >
-              Hello! <br /> What would you like to do today?
+            <h1 className="welcome-text" onClick={() => handleTextClick("Hello! What would you like to do today?")}>
+              Hello!  <br /> What would you like to do today?
             </h1>
             <div className="cash-buttons">
               {['$50', '$80', '$100', '$500'].map((amount) => (
                 <button
                   key={amount}
-                  {...handleButtonClick(amount, () => console.log(`${amount} activated`))} // handle single or double click based on TTS
+                  {...handleButtonClick(amount, () => console.log(`${amount} activated`))}
                   className="cash-button"
-                  style={{ fontSize: 'var(--button-font-size)' }}
                 >
                   {amount}
                 </button>
               ))}
             </div>
-            <button 
-              className="other-cash-button" 
-              {...handleButtonClick('Other cash amounts', () => console.log('Other cash amounts activated'))}
-              style={{ fontSize: 'var(--button-font-size)' }}
-            >
+            <button className="other-cash-button" {...handleButtonClick('Other cash amounts', () => console.log('Other cash amounts activated'))}>
               Other cash amounts
             </button>
           </div>
 
-          {/* other services section */}
           <div className="non-cash-services">
-            <div 
-              className="service-box" 
-              onClick={() => handleTextClick('Deposit Cash')}
-            >
-              Deposit Cash
-            </div>
-            <div 
-              className="service-box" 
-              onClick={() => handleTextClick('Ask about Balance')}
-            >
-              Ask about Balance
-            </div>
+            <div className="service-box" onClick={() => handleTextClick('Deposit Cash')}>Deposit Cash</div>
+            <div className="service-box" onClick={() => handleTextClick('Ask about Balance')}>Ask about Balance</div>
 
-            {/* button to navigate to preferences page */}
             <div className="preferences-button">
-              <button 
-                {...handleButtonClick('Preferences', () => navigate('/preferences'))}
-                className="preference-nav-button"
-                style={{ fontSize: 'var(--button-font-size)' }}
-              >
-                Preferences
-              </button>
+              <button {...handleButtonClick('Preferences', () => navigate('/preferences', { state: { userID } }))} className="preference-nav-button">Preferences</button>
             </div>
 
-            {/* button to navigate to shortcuts page */}
             <div className="shortcuts-button">
-              <button 
-                {...handleButtonClick('Shortcuts', () => navigate('/shortcuts'))}
-                className="shortcuts-nav-button"
-                style={{ fontSize: 'var(--button-font-size)' }}
-              >
-                Shortcuts
-              </button>
+              <button {...handleButtonClick('Shortcuts', () => navigate('/shortcuts'))} className="shortcuts-nav-button">Shortcuts</button>
             </div>
 
             <div className="more-services">
-              <p 
-                className="more-link" 
-                onClick={() => handleTextClick('More services')}
-              >
-                More services
-              </p>
-              <p 
-                className="more-link" 
-                onClick={() => handleTextClick('FAQs')}
-              >
-                FAQs &gt;
-              </p>
-              <p 
-                className="more-link" 
-                onClick={() => handleTextClick('Customise')}
-              >
-                Customise &gt;
-              </p>
+              <p className="more-link" onClick={() => handleTextClick('More services')}>More services</p>
+              <p className="more-link" onClick={() => handleTextClick('FAQs')}>FAQs &gt;</p>
+              <p className="more-link" onClick={() => handleTextClick('Customise')}>Customise &gt;</p>
             </div>
           </div>
         </div>
