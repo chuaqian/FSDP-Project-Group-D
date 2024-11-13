@@ -1,14 +1,26 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import OCBCLogo from './images/OCBC-Logo.png'; 
+import { useNavigate, useLocation } from 'react-router-dom';
+import OCBCLogo from './images/OCBC-Logo.png';
+
+interface LocationState {
+  userID: string;
+}
 
 const Withdraw = () => {
   const navigate = useNavigate();
-  
-  const userID = "user-id";  
+  const location = useLocation();
+  const state = location.state as LocationState;
+  const userID = state?.userID;
+
+  // Handle cases where userID is missing (e.g., navigate to a safe page)
+  if (!userID) {
+    console.error("No user ID found in Withdraw page.");
+    navigate('/'); // Redirect to home if no userID
+    return null; // Render nothing during redirect
+  }
 
   return (
-    <div className="home-container">  
+    <div className="home-container">
       <img src={OCBCLogo} alt="OCBC Logo" className="fixed-logo large-logo" />
       <div className="home-content">
         <h2 className="withdraw-heading">Withdraw Confirmation</h2>

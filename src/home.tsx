@@ -136,12 +136,13 @@ const Home = () => {
             <button 
               className="other-cash-button" 
               onClick={() => {
-                handleButtonClick('Other cash amounts', () => console.log('Other cash amounts activated'));
-                navigate('/OtherAmounts', { state: { userID} });  // Passing userID in the state
+                console.log('Navigating with userID:', userID); // Debug log to verify userID
+                navigate('/OtherAmounts', { state: { userID } });  // Passing userID in the state
               }}
             >
               Other cash amounts
             </button>
+
 
           </div>
 

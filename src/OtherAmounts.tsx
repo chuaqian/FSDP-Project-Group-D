@@ -16,10 +16,10 @@ const OtherAmounts: React.FC = () => {
   // Access the userID from location state
   const location = useLocation();
   const state = location.state as LocationState;
-
   const userID = state?.userID; 
 
   useEffect(() => {
+    console.log('User ID in OtherAmounts:', userID); // Debug log to verify userID
     if (!userID) {
       console.error('No user ID found in location state. Cannot proceed.');
       navigate('/'); 
@@ -47,7 +47,6 @@ const OtherAmounts: React.FC = () => {
 
     try {
       const userDocRef = doc(db, 'users', userID);
-
       const transactionsRef = collection(userDocRef, 'transactions');
 
       await addDoc(transactionsRef, {
@@ -57,7 +56,7 @@ const OtherAmounts: React.FC = () => {
 
       console.log(`Transaction of $${amount} recorded for user ${userID}`);
 
-      navigate('/withdraw');
+      navigate('/withdraw', { state: { userID } });
     } catch (error) {
       console.error('Error saving transaction:', error);
     }
@@ -99,9 +98,7 @@ const OtherAmounts: React.FC = () => {
         </div>
 
         {/* Go back button */}
-        <button onClick={() => navigate('/home')} className="go-back-button2">
-          Go Back
-        </button>
+        <button onClick={() => navigate('/home', { state: { userID } })} className="go-back-button2">Go Back</button>
       </div>
     </div>
   );

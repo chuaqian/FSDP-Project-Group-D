@@ -20,7 +20,7 @@ const Shortcuts: React.FC = () => {
   // Retrieve userID from location state (passed during navigation)
   const location = useLocation();
   const state = location.state as LocationState;
-  const userID = state?.userID;
+  const userID = location.state?.userID;
 
   // Check if userID exists
   useEffect(() => {
@@ -89,7 +89,7 @@ const Shortcuts: React.FC = () => {
       return;
     }
 
-    if (transactions.length < 3) { // Limit to 3 saved transactions
+    if (transactions.length < 4) { // Limit to 4 saved transactions
       const newTransaction = { type: transactionType, amount };
       console.log("Saving new transaction:", newTransaction);
 
@@ -110,12 +110,12 @@ const Shortcuts: React.FC = () => {
 
   const handleTransactionClick = (transaction: { type: string; amount: string }) => {
     if (userID) {
-      navigate('/transaction-confirmation', { state: { ...transaction, userId: userID } });
+      navigate('/transaction-confirmation', { state: { type: transaction.type, amount: transaction.amount, userId: userID } });
     } else {
       alert("No user ID found.");
       navigate('/');
     }
-  };
+  };  
 
   return (
     <div className={`home-container ${theme === 'dark' ? 'dark-theme' : 'light-theme'}`}>
@@ -138,11 +138,6 @@ const Shortcuts: React.FC = () => {
                 {transaction.type}: ${transaction.amount}
               </div>
             ))}
-          </div>
-
-          {/* Go Back Button under Saved Transactions */}
-          <div className="go-back-section mt-4">
-            <button onClick={() => navigate('/home')} className="go-back-button1">Go Back</button>
           </div>
         </div>
 
@@ -175,6 +170,9 @@ const Shortcuts: React.FC = () => {
 
           {/* Save button */}
           <button onClick={handleSave} className="save-button">Add</button>
+        
+         {/* Go Back button below Save button */}
+          <button onClick={() => navigate('/home', { state: { userID } })} className="go-back-button1">Go Back</button>
         </div>
       </div>
       <WatsonChat /> {/* Add Watson Chat component here */}

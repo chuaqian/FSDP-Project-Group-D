@@ -311,11 +311,11 @@ body {
 }
 
 .transaction-box {
-  background-color: #9ca3af; 
-  padding: 10px;
+  background-color: #90959f; 
+  padding: 15px;
   border-radius: 4px;
   width: 305px;
-  font-size: 16px; 
+  font-size: 15px; 
   color: #ffffff; 
   margin-bottom: 8px;
 }
@@ -323,18 +323,15 @@ body {
 .go-back-button1 {
   background-color: #2563eb;
   color: #ffffff;
-  padding: 15px 90px; 
+  padding: 15px 60px; 
   border-radius: 8px;
-  font-size: 0.875rem; 
+  font-size: 1rem; 
   font-weight: bold;
   border: none;
   cursor: pointer;
   transition: background-color 0.3s;
-  width: 26%; 
-  position: fixed;
-  bottom: 188px; 
-  left: 30%; 
-  transform: translateX(-50%); 
+  width: 100%; 
+  margin-top: 10px;   
 }
 
 .go-back-button1:hover {
