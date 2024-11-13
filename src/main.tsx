@@ -4,11 +4,14 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Preference from './preference';
 import Shortcuts from './Shortcuts';
 import QRScanner from './QRScanner';
-import Home from './home'; // import Home page
+import Home from './home';
 import LandingPage from './LandingPage';
 import CardLogin from './CardLogin';
 import WatsonChat from './WatsonChat';
 import './index.css';
+import TransactionConfirmation from './TransactionConfirmation';
+import OtherAmounts from './OtherAmounts';
+import Withdraw from './Withdraw';  
 
 createRoot(document.getElementById('root')!).render(
     <Router>
@@ -20,7 +23,9 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/shortcuts" element={<Shortcuts />} /> 
         <Route path="/QRScanner" element={<QRScanner />} />
         <Route path="/watsonchat" element={<WatsonChat />} /> 
-        <Route path="/QRScanner" element={<QRScanner />} />
+        <Route path="/transaction-confirmation" element={<TransactionConfirmation />} />
+        <Route path="/OtherAmounts" element={<OtherAmounts />} />
+        <Route path="/withdraw" element={<Withdraw />} />
       </Routes>
     </Router>
 );

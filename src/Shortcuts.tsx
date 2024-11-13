@@ -1,67 +1,120 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import OCBCLogo from './images/OCBC-Logo.png';
 import { db, collection, addDoc, getDocs } from './firebaseConfig';
 import WatsonChat from './WatsonChat';
+
+interface LocationState {
+  userID: string;
+}
 
 const Shortcuts: React.FC = () => {
   const [theme, setTheme] = useState('light');
   const [transactionType, setTransactionType] = useState('Cash Withdrawal');
   const [amount, setAmount] = useState('');
   const [transactions, setTransactions] = useState<{ type: string; amount: string }[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [mostFrequentAmount, setMostFrequentAmount] = useState<string | null>(null); // For frequent withdrawal amount
   const navigate = useNavigate();
 
+  // Retrieve userID from location state (passed during navigation)
+  const location = useLocation();
+  const state = location.state as LocationState;
+  const userID = state?.userID;
+
+  // Check if userID exists
   useEffect(() => {
-    // Get theme from localStorage
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    setTheme(savedTheme);
-    document.documentElement.setAttribute('data-theme', savedTheme);
+    if (!userID) {
+      console.error("No user ID found. Cannot proceed.");
+      navigate('/'); 
+    } else {
+      setLoading(false); 
+    }
+  }, [userID, navigate]);
 
-    // Fetch transactions from Firestore when the component mounts
-    const fetchTransactions = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, 'shortcuts'));
-        const transactionsList: { type: string; amount: string }[] = [];
-        querySnapshot.forEach((doc) => {
-          transactionsList.push(doc.data() as { type: string; amount: string });
-        });
-        console.log("Fetched transactions:", transactionsList);
-        setTransactions(transactionsList);
-      } catch (error) {
-        console.error("Error fetching transactions:", error);
+  // Fetch most frequent withdrawal amount
+  const fetchFrequentAmount = async () => {
+    if (!userID) return;
+
+    const transactionsRef = collection(db, 'users', userID, 'transactions');
+    const querySnapshot = await getDocs(transactionsRef);
+
+    const frequencyMap: Record<string, number> = {};
+    querySnapshot.forEach((doc) => {
+      const transaction = doc.data();
+      const amount = transaction.amount.toString();
+      frequencyMap[amount] = (frequencyMap[amount] || 0) + 1;
+    });
+
+    let mostFrequentAmount = null;
+    let maxCount = 0;
+    for (const [amount, count] of Object.entries(frequencyMap)) {
+      if (count > maxCount) {
+        mostFrequentAmount = amount;
+        maxCount = count;
       }
-    };
+    }
 
-    fetchTransactions();
-  }, []);
+    setMostFrequentAmount(mostFrequentAmount);  
+  };
 
+  useEffect(() => {
+    if (userID) {
+      fetchFrequentAmount();
+    }
+  }, [userID]);
+
+  useEffect(() => {
+    if (userID) {
+      const fetchTransactions = async () => {
+        try {
+          const querySnapshot = await getDocs(collection(db, 'users', userID, 'shortcuts'));
+          const transactionsList: { type: string; amount: string }[] = [];
+          querySnapshot.forEach((doc) => {
+            transactionsList.push(doc.data() as { type: string; amount: string });
+          });
+          setTransactions(transactionsList);
+        } catch (error) {
+          console.error("Error fetching transactions:", error);
+        }
+      };
+
+      fetchTransactions();
+    }
+  }, [userID]);
 
   const handleSave = async () => {
+    if (!userID) {
+      console.error("No user ID found. Cannot save transaction.");
+      return;
+    }
+
     if (transactions.length < 3) { // Limit to 3 saved transactions
       const newTransaction = { type: transactionType, amount };
       console.log("Saving new transaction:", newTransaction);
 
-      // Save the transaction to Firestore
       try {
-        await addDoc(collection(db, 'shortcuts'), newTransaction);
-        // After saving, fetch and update transactions
-        const querySnapshot = await getDocs(collection(db, 'shortcuts'));
+        await addDoc(collection(db, 'users', userID, 'shortcuts'), newTransaction);
+        const querySnapshot = await getDocs(collection(db, 'users', userID, 'shortcuts'));
         const transactionsList: { type: string; amount: string }[] = [];
         querySnapshot.forEach((doc) => {
           transactionsList.push(doc.data() as { type: string; amount: string });
         });
-        console.log("Updated transactions after save:", transactionsList);
-        setTransactions(transactionsList); // Update local state with latest data
+        setTransactions(transactionsList); 
       } catch (error) {
         console.error("Error adding document:", error);
       }
     }
-    setAmount(''); // Clear the input after saving
+    setAmount(''); 
   };
 
   const handleTransactionClick = (transaction: { type: string; amount: string }) => {
-    // Navigate to the transaction confirmation page
-    navigate('/transaction-confirmation', { state: transaction });
+    if (userID) {
+      navigate('/transaction-confirmation', { state: { ...transaction, userId: userID } });
+    } else {
+      alert("No user ID found.");
+      navigate('/');
+    }
   };
 
   return (
@@ -71,6 +124,13 @@ const Shortcuts: React.FC = () => {
         <div className="home-grid1">
           <h1 className="text-2xl font-bold">Shortcuts</h1>
 
+          {/* Display Suggested Frequent Withdrawal */}
+          {mostFrequentAmount && (
+            <div className="transaction-box" onClick={() => handleTransactionClick({ type: 'Frequent Withdrawal', amount: mostFrequentAmount })}>
+              <p>Suggested Frequent Withdrawal: ${mostFrequentAmount}</p>
+            </div>
+          )}
+
           {/* Saved transactions directly under Shortcuts */}
           <div className="saved-transactions">
             {transactions.map((transaction, index) => (
@@ -78,6 +138,11 @@ const Shortcuts: React.FC = () => {
                 {transaction.type}: ${transaction.amount}
               </div>
             ))}
+          </div>
+
+          {/* Go Back Button under Saved Transactions */}
+          <div className="go-back-section mt-4">
+            <button onClick={() => navigate('/home')} className="go-back-button1">Go Back</button>
           </div>
         </div>
 

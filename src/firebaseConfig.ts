@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection,doc, addDoc, getDocs } from "firebase/firestore"; 
+import { getFirestore, collection, doc, addDoc, getDocs, setDoc } from "firebase/firestore";  // Import setDoc
 import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
@@ -13,13 +13,12 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app); // Initialize Firestore
 const auth = getAuth(app);
 // user pref
 const getUserPreferencesRef = (uid: string) => doc(db, "preferences", uid);
-// Export Firestore functions and auth
 
-export { app, auth, db, collection, addDoc, getDocs, getUserPreferencesRef };
+// Export Firestore functions and auth
+export { app, auth, db, collection, doc, addDoc, getDocs, setDoc, getUserPreferencesRef }; // Add setDoc to exports

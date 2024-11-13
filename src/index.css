@@ -86,9 +86,9 @@ body {
 
 .home-content1 {
   display: flex;
-  flex-direction: row; /* Align elements horizontally */
-  align-items: flex-start; /* Align items to the top */
-  justify-content: space-between; /* Add space between home-grid1 and transaction-container */
+  flex-direction: row; 
+  align-items: flex-start; 
+  justify-content: space-between; 
   width: 100%;
   max-width: 900px;
   background-color: #ffffff;
@@ -104,7 +104,7 @@ body {
 }
 
 .home-grid1 {
-  flex: 1; /* Allow home-grid1 to take available space on the left */
+  flex: 1; 
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -307,17 +307,44 @@ body {
 }
 
 .saved-transactions {
-  margin-top: 15px;
+  margin-top: 0;
 }
 
 .transaction-box {
   background-color: #9ca3af; 
   padding: 10px;
   border-radius: 4px;
-  width: 180px;
+  width: 305px;
   font-size: 16px; 
   color: #ffffff; 
   margin-bottom: 8px;
+}
+
+.go-back-button1 {
+  background-color: #2563eb;
+  color: #ffffff;
+  padding: 15px 90px; 
+  border-radius: 8px;
+  font-size: 0.875rem; 
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 26%; 
+  position: fixed;
+  bottom: 188px; 
+  left: 30%; 
+  transform: translateX(-50%); 
+}
+
+.go-back-button1:hover {
+  background-color: #2256c6;
+}
+
+/* Additional spacing and styling for the Go Back section */
+.go-back-section {
+  margin-top: 8px;
+  display: flex;
 }
 
 /* QR Scanner Component Styles */
@@ -546,4 +573,228 @@ body {
 .pin-input:focus {
   border-color: #2563eb; /* Blue color on focus */
   outline: none;
+}
+
+/* transaction confirmation page */
+.home-content3 {
+  width: 100%;
+  max-width: 900px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.transaction-box1 {
+  background-color: transparent; 
+  white-space: nowrap;
+  padding: 10px;
+  border-radius: 4px;
+  width: 180px;
+  font-size: 16px; 
+  color: #333333; 
+  margin-bottom: 20px;
+}
+
+.transaction-info1 {
+  margin-top: 10px; 
+  margin-bottom: 20px;
+  font-size: 18px;
+  margin-left: 5px;
+}
+
+.text-xl-half {
+  font-size: 1.175rem; 
+  font-weight: 550;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 8px; /* Adjust gap as needed */
+}
+
+.go-back-button {
+  background-color: #e11d48;
+  color: #ffffff;
+  padding: 5px 0; 
+  border-radius: 8px;
+  font-size: 0.875rem; 
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin: 0 5px;
+  flex: 1;
+  width: 20px;
+}
+
+.go-back-button:hover {
+  background-color: #b91c1c;
+}
+
+.confirm-button {
+  background-color: #2563eb;
+  color: #ffffff;
+  padding: 12px 0; 
+  border-radius: 8px;
+  font-size: 0.875rem; 
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin: 0 5px;
+  flex: 1;
+  width: 20px;
+}
+
+.confirm-button:hover {
+  background-color: #1d4ed8;
+}
+
+@media (min-width: 640px) {
+  .go-back-button, .confirm-button{
+    width: 50px;  
+  }
+}
+
+/* OtherAmounts.tsx*/
+.home-content4 {
+  display: flex;
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center; 
+  width: 100%;
+  max-width: 900px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.home-grid4 {
+  flex: 1; 
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.go-back-button2 {
+  background-color: #e11d48;
+  color: #ffffff;
+  padding: 8px 40px; 
+  border-radius: 8px;
+  font-size: 0.775rem; 
+  font-weight: bold;
+  border: none; 
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: auto; 
+  margin-top: 20px;
+  text-align: center;
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 30px 0; 
+}
+
+.input-box {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border: 2px solid rgb(77, 77, 77);
+  border-radius: 7px;
+  font-size: 1.2rem;
+  width: 340px; 
+  background-color: white;
+  margin-top: 10px;
+}
+
+.input-box input {
+  width: 100%;
+  color:#5c5c5c;
+  border: none;
+  text-align: center;
+  font-size: 1.2rem;
+  outline: none;
+  background-color: transparent;
+  padding-left: 10px;
+}
+
+.input-box input:focus {
+  color:black;
+}
+
+.input-box span {
+  font-size: 1.2rem;
+  padding-left: 8px;
+  color:#5c5c5c;
+}
+
+.button {
+  padding: 15px 30px;
+  font-size: 1rem;
+  font-weight: normal;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 48%; 
+  text-align: center; 
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px; 
+  width: 340px; 
+  gap: 3px;  
+}
+
+.clear-button {
+  background-color: #4C5364;
+  color: white;
+}
+
+.confirm-button1 {
+  background-color: #4C5364;
+  color: white;
+}
+
+.clear-button:hover {
+  background-color: #5d6578;
+}
+
+.confirm-button1:hover {
+  background-color: #5d6578;
+}
+
+/* Withdraw.tsx */
+.go-back-button3 {
+  display: inline-block; 
+  padding: 10px 30px; 
+  font-size: 16px; 
+  background-color: #eb2532; 
+  color: white; 
+  border: none; 
+  border-radius: 5px; 
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.go-back-button3:hover {
+  background-color: #be1d28; 
+}
+
+.withdraw-heading {
+  margin-bottom: 10px; 
+}
+
+.withdraw-message {
+  margin-top: 20px; 
+  margin-bottom: 20px;
+  font-size: 18px;
 }

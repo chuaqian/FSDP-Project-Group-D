@@ -133,9 +133,16 @@ const Home = () => {
                 </button>
               ))}
             </div>
-            <button className="other-cash-button" {...handleButtonClick('Other cash amounts', () => console.log('Other cash amounts activated'))}>
+            <button 
+              className="other-cash-button" 
+              onClick={() => {
+                handleButtonClick('Other cash amounts', () => console.log('Other cash amounts activated'));
+                navigate('/OtherAmounts', { state: { userID} });  // Passing userID in the state
+              }}
+            >
               Other cash amounts
             </button>
+
           </div>
 
           <div className="non-cash-services">
@@ -147,13 +154,11 @@ const Home = () => {
             </div>
 
             <div className="shortcuts-button">
-              <button {...handleButtonClick('Shortcuts', () => navigate('/shortcuts'))} className="shortcuts-nav-button">Shortcuts</button>
+              <button {...handleButtonClick('Shortcuts', () => navigate('/shortcuts', { state: { userID }}))} className="shortcuts-nav-button">Shortcuts</button>
             </div>
 
             <div className="more-services">
-              <p className="more-link" onClick={() => handleTextClick('More services')}>More services</p>
-              <p className="more-link" onClick={() => handleTextClick('FAQs')}>FAQs &gt;</p>
-              <p className="more-link" onClick={() => handleTextClick('Customise')}>Customise &gt;</p>
+              <p className="more-link" onClick={() => handleTextClick('More services')}>More services &gt;</p>
             </div>
           </div>
         </div>
