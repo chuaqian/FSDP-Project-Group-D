@@ -5,6 +5,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from './firebaseConfig';
 import OCBCLogo from './images/OCBC-Logo.png';
 import { useLocation, useNavigate } from "react-router-dom";
+import WatsonChat from './WatsonChat';
 
 interface UserData {
   uid: string;
@@ -174,7 +175,9 @@ const Home = () => {
           </div>
         </div>
       </div>
+      <WatsonChat />
     </div>
+    
   );
 };
 
