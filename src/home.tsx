@@ -138,12 +138,17 @@ const Home = () => {
                 </button>
               ))}
             </div>
-            <button 
-              className="other-cash-button" 
-              onClick={() => {
+            <button
+              className="other-cash-button"
+              style={{
+                fontFamily: font,
+                fontWeight: fontWeight === 'bold' ? '700' : '400',
+                fontSize: iconSize === 'large' ? '1.2rem' : '1rem'
+              }}
+              {...handleButtonClick("Other cash amounts", () => {
                 console.log('Navigating with userID:', userID); // Debug log to verify userID
                 navigate('/OtherAmounts', { state: { userID, theme } });  // Passing userID in the state
-              }}
+              })}
             >
               Other cash amounts
             </button>

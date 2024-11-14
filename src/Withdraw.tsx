@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import OCBCLogo from './images/OCBC-Logo.png';
+import { db, collection, getDocs } from './firebaseConfig';
 
 interface LocationState {
   userID: string;
-  theme?: string; // Optional theme property
+  theme?: string;
 }
 
 const Withdraw: React.FC = () => {
@@ -13,8 +14,8 @@ const Withdraw: React.FC = () => {
   const state = location.state as LocationState;
   const userID = state?.userID;
   const [theme, setTheme] = useState('light');
+  const [textToSpeech, setTextToSpeech] = useState(false);
 
-  // Handle cases where userID is missing (e.g., navigate to a safe page)
   useEffect(() => {
     const savedTheme = state?.theme || localStorage.getItem('theme') || 'light';
     setTheme(savedTheme);
@@ -22,26 +23,55 @@ const Withdraw: React.FC = () => {
 
     if (!userID) {
       console.error('No user ID found in Withdraw page.');
-      navigate('/'); // Redirect to home if no userID
+      navigate('/');
+    } else {
+      fetchPreferences(userID); // Fetch preferences with user ID
     }
   }, [userID, navigate, state?.theme]);
 
-  if (!userID) {
-    return null; // Prevent rendering if there's no user ID
-  }
+  const fetchPreferences = async (userID: string) => {
+    const preferencesRef = collection(db, "preferences");
+    const querySnapshot = await getDocs(preferencesRef);
+
+    querySnapshot.forEach((doc) => {
+      if (doc.id === userID) {
+        const data = doc.data();
+        setTextToSpeech(data.textToSpeech || false);
+      }
+    });
+  };
+
+  const speak = (text: string) => {
+    if (textToSpeech && 'speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
+  const handleTextClick = (text: string) => {
+    if (textToSpeech) speak(text);
+  };
 
   return (
     <div className={`home-container ${theme === 'dark' ? 'dark-theme' : 'light-theme'}`}>
       <img src={OCBCLogo} alt="OCBC Logo" className="fixed-logo large-logo" />
       <div className="home-content">
-      <h2 className={`withdraw-heading ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
-        Withdraw Confirmation
-      </h2>
-      <p className={`withdraw-message ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
-        Your withdrawal has been successfully processed.
-      </p>
+        <h2
+          className={`withdraw-heading ${theme === 'dark' ? 'text-white' : 'text-black'}`}
+          onClick={() => handleTextClick("Withdraw Confirmation")}
+        >
+          Withdraw Confirmation
+        </h2>
+        <p
+          className={`withdraw-message ${theme === 'dark' ? 'text-white' : 'text-black'}`}
+          onClick={() => handleTextClick("Your withdrawal has been successfully processed.")}
+        >
+          Your withdrawal has been successfully processed.
+        </p>
         <button
-          onClick={() => navigate('/OtherAmounts', { state: { userID, theme } })}
+          onClick={() => handleTextClick("Go Back")}
+          onDoubleClick={() => navigate('/OtherAmounts', { state: { userID, theme } })}
           className="go-back-button3"
         >
           Go Back

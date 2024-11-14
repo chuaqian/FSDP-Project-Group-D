@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import OCBCLogo from './images/OCBC-Logo.png';
-import { addDoc, collection, Timestamp, doc } from 'firebase/firestore';
-import { db } from './firebaseConfig'; // Make sure db is correctly imported
+import { addDoc, collection, Timestamp, doc, getDocs } from 'firebase/firestore';
+import { db } from './firebaseConfig';
 
 interface LocationState {
   userID: string;
@@ -14,30 +14,53 @@ const OtherAmounts: React.FC = () => {
   const [amount, setAmount] = useState('0.00');
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
-  // Access the userID from location state
   const location = useLocation();
   const state = location.state as LocationState;
-  const userID = state?.userID; 
+  const userID = state?.userID;
+  const [textToSpeech, setTextToSpeech] = useState(false);
 
   useEffect(() => {
     const savedTheme = state?.theme || localStorage.getItem('theme') || 'light';
     setTheme(savedTheme);
     document.documentElement.setAttribute('data-theme', savedTheme);
 
-    console.log('User ID in OtherAmounts:', userID); // Debug log to verify userID
     if (!userID) {
       console.error('No user ID found in location state. Cannot proceed.');
-      navigate('/'); 
+      navigate('/');
     } else {
-      setLoading(false); 
+      setLoading(false);
+      fetchPreferences(userID); // Fetch preferences with user ID
     }
   }, [userID, navigate, state?.theme]);
+
+  const fetchPreferences = async (userID: string) => {
+    const preferencesRef = collection(db, "preferences");
+    const querySnapshot = await getDocs(preferencesRef);
+
+    querySnapshot.forEach((doc) => {
+      if (doc.id === userID) {
+        const data = doc.data();
+        setTextToSpeech(data.textToSpeech || false);
+      }
+    });
+  };
+
+  const speak = (text: string) => {
+    if (textToSpeech && 'speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
+  const handleTextClick = (text: string) => {
+    if (textToSpeech) speak(text);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (!isNaN(Number(value))) {
-      setAmount(value); 
+      setAmount(value);
     }
   };
 
@@ -56,11 +79,10 @@ const OtherAmounts: React.FC = () => {
       const transactionsRef = collection(userDocRef, 'transactions');
 
       await addDoc(transactionsRef, {
-        amount: parseFloat(amount),  // amount entered by the user
-        timestamp: Timestamp.now(),  // current time (timestamp)
+        amount: parseFloat(amount),
+        timestamp: Timestamp.now(),
       });
 
-      console.log(`Transaction of $${amount} recorded for user ${userID}`);
       navigate('/withdraw', { state: { userID, theme } });
     } catch (error) {
       console.error('Error saving transaction:', error);
@@ -68,7 +90,7 @@ const OtherAmounts: React.FC = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>; 
+    return <div>Loading...</div>;
   }
 
   return (
@@ -77,12 +99,11 @@ const OtherAmounts: React.FC = () => {
       <div className="home-content4">
         <h2
           className={`text-center ${theme === 'dark' ? 'text-white' : 'text-black'}`}
-          style={{ fontWeight: 'normal', fontSize: '1rem' }}
+          onClick={() => handleTextClick("Please enter amount in multiples of $10 or $50")}
         >
           Please enter amount in multiples of $10 or $50
         </h2>
 
-        {/* Input box for amount */}
         <div className="input-container">
           <div className="input-box">
             <span>$</span>
@@ -91,22 +112,35 @@ const OtherAmounts: React.FC = () => {
               value={amount}
               onChange={handleInputChange}
               placeholder="0.00"
+              onClick={() => handleTextClick("Amount entry field")}
             />
           </div>
         </div>
 
-        {/* Buttons for actions */}
         <div className="buttons-container">
-          <button className="button clear-button" onClick={handleClear}>
+          <button
+            className="button clear-button"
+            onClick={() => handleTextClick("Clear")}
+            onDoubleClick={handleClear}
+          >
             Clear
           </button>
-          <button className="button confirm-button1" onClick={handleConfirm}>
+          <button
+            className="button confirm-button1"
+            onClick={() => handleTextClick("Confirm")}
+            onDoubleClick={handleConfirm}
+          >
             Confirm
           </button>
         </div>
 
-        {/* Go back button */}
-        <button onClick={() => navigate('/home', { state: { userID, theme } })} className="go-back-button2">Go Back</button>
+        <button
+          onClick={() => handleTextClick("Go Back")}
+          onDoubleClick={() => navigate('/home', { state: { userID, theme } })}
+          className="go-back-button2"
+        >
+          Go Back
+        </button>
       </div>
     </div>
   );
