@@ -19,7 +19,7 @@ const TransactionConfirmation: React.FC = () => {
   const transaction = location.state as TransactionState;
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') || 'light';
+    const savedTheme = location.state?.theme || localStorage.getItem('theme') || 'light';
     setTheme(savedTheme);
     document.documentElement.setAttribute('data-theme', savedTheme);
 
@@ -36,12 +36,12 @@ const TransactionConfirmation: React.FC = () => {
         }
       });
     }
-  }, [navigate, transaction]);
+  }, [navigate, transaction, location.state]);
 
   const goBack = () => {
     if (userId) {
       // Navigate back to Shortcuts with userId in state
-      navigate('/shortcuts', { state: { userID: userId } });
+      navigate('/shortcuts', { state: { userID: userId, theme } });
     } else {
       alert("No user ID found. Cannot proceed.");
       navigate('/');

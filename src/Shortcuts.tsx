@@ -9,7 +9,6 @@ interface LocationState {
 }
 
 const Shortcuts: React.FC = () => {
-  const [theme, setTheme] = useState('light');
   const [transactionType, setTransactionType] = useState('Cash Withdrawal');
   const [amount, setAmount] = useState('');
   const [transactions, setTransactions] = useState<{ type: string; amount: string }[]>([]);
@@ -19,10 +18,11 @@ const Shortcuts: React.FC = () => {
 
   // Retrieve userID from location state (passed during navigation)
   const location = useLocation();
-  const state = location.state as LocationState;
+  const theme = location.state?.theme || 'light';
+  const state = location.state as LocationState & { theme: string };
   const userID = location.state?.userID;
 
-  // Check if userID exists
+  // Check if userID exists   
   useEffect(() => {
     if (!userID) {
       console.error("No user ID found. Cannot proceed.");
@@ -110,7 +110,7 @@ const Shortcuts: React.FC = () => {
 
   const handleTransactionClick = (transaction: { type: string; amount: string }) => {
     if (userID) {
-      navigate('/transaction-confirmation', { state: { type: transaction.type, amount: transaction.amount, userId: userID } });
+      navigate('/transaction-confirmation', { state: { type: transaction.type, amount: transaction.amount, userId: userID, theme} });
     } else {
       alert("No user ID found.");
       navigate('/');
@@ -122,7 +122,9 @@ const Shortcuts: React.FC = () => {
       <img src={OCBCLogo} alt="OCBC Logo" className="fixed-logo large-logo" />
       <div className="home-content1">
         <div className="home-grid1">
-          <h1 className="text-2xl font-bold">Shortcuts</h1>
+          <h1 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
+            Shortcuts
+          </h1>
 
           {/* Display Suggested Frequent Withdrawal */}
           {mostFrequentAmount && (
@@ -143,7 +145,7 @@ const Shortcuts: React.FC = () => {
 
         {/* Transaction input section on the right side */}
         <div className="transaction-container">
-          <p className="transaction-info">
+          <p className={`transaction-info ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
             <b>Choose the transaction type you would like to add into Shortcuts</b>
           </p>
 

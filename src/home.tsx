@@ -101,6 +101,11 @@ const Home = () => {
     }
   };
 
+  const handleAmountClick = (amount: string) => {
+    navigate('/withdraw', { state: { amount, userID } });
+  };
+  
+
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -126,7 +131,7 @@ const Home = () => {
               {['$50', '$80', '$100', '$500'].map((amount) => (
                 <button
                   key={amount}
-                  {...handleButtonClick(amount, () => console.log(`${amount} activated`))}
+                  {...handleButtonClick(amount, () => handleAmountClick(amount))}
                   className="cash-button"
                 >
                   {amount}
@@ -137,7 +142,7 @@ const Home = () => {
               className="other-cash-button" 
               onClick={() => {
                 console.log('Navigating with userID:', userID); // Debug log to verify userID
-                navigate('/OtherAmounts', { state: { userID } });  // Passing userID in the state
+                navigate('/OtherAmounts', { state: { userID, theme } });  // Passing userID in the state
               }}
             >
               Other cash amounts
@@ -155,11 +160,16 @@ const Home = () => {
             </div>
 
             <div className="shortcuts-button">
-              <button {...handleButtonClick('Shortcuts', () => navigate('/shortcuts', { state: { userID }}))} className="shortcuts-nav-button">Shortcuts</button>
+              <button {...handleButtonClick('Shortcuts', () => navigate('/shortcuts', { state: { userID, theme }}))} className="shortcuts-nav-button">Shortcuts</button>
             </div>
 
             <div className="more-services">
-              <p className="more-link" onClick={() => handleTextClick('More services')}>More services &gt;</p>
+              <p
+                className={`more-link ${theme === 'dark' ? 'text-white' : 'text-black'}`}
+                onClick={() => handleTextClick('More services')}
+              >
+                More services &gt;
+              </p>
             </div>
           </div>
         </div>

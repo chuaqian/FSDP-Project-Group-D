@@ -6,12 +6,14 @@ import { db } from './firebaseConfig'; // Make sure db is correctly imported
 
 interface LocationState {
   userID: string;
+  theme?: string;
 }
 
 const OtherAmounts: React.FC = () => {
-  const navigate = useNavigate();
+  const [theme, setTheme] = useState('light');
   const [amount, setAmount] = useState('0.00');
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Access the userID from location state
   const location = useLocation();
@@ -19,6 +21,10 @@ const OtherAmounts: React.FC = () => {
   const userID = state?.userID; 
 
   useEffect(() => {
+    const savedTheme = state?.theme || localStorage.getItem('theme') || 'light';
+    setTheme(savedTheme);
+    document.documentElement.setAttribute('data-theme', savedTheme);
+
     console.log('User ID in OtherAmounts:', userID); // Debug log to verify userID
     if (!userID) {
       console.error('No user ID found in location state. Cannot proceed.');
@@ -26,7 +32,7 @@ const OtherAmounts: React.FC = () => {
     } else {
       setLoading(false); 
     }
-  }, [userID, navigate]);
+  }, [userID, navigate, state?.theme]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -55,8 +61,7 @@ const OtherAmounts: React.FC = () => {
       });
 
       console.log(`Transaction of $${amount} recorded for user ${userID}`);
-
-      navigate('/withdraw', { state: { userID } });
+      navigate('/withdraw', { state: { userID, theme } });
     } catch (error) {
       console.error('Error saving transaction:', error);
     }
@@ -67,10 +72,13 @@ const OtherAmounts: React.FC = () => {
   }
 
   return (
-    <div className="home-container">
+    <div className={`home-container ${theme === 'dark' ? 'dark-theme' : 'light-theme'}`}>
       <img src={OCBCLogo} alt="OCBC Logo" className="fixed-logo large-logo" />
       <div className="home-content4">
-        <h2 style={{ fontWeight: 'normal', fontSize: '1rem', textAlign: 'center' }}>
+        <h2
+          className={`text-center ${theme === 'dark' ? 'text-white' : 'text-black'}`}
+          style={{ fontWeight: 'normal', fontSize: '1rem' }}
+        >
           Please enter amount in multiples of $10 or $50
         </h2>
 
@@ -98,7 +106,7 @@ const OtherAmounts: React.FC = () => {
         </div>
 
         {/* Go back button */}
-        <button onClick={() => navigate('/home', { state: { userID } })} className="go-back-button2">Go Back</button>
+        <button onClick={() => navigate('/home', { state: { userID, theme } })} className="go-back-button2">Go Back</button>
       </div>
     </div>
   );

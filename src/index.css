@@ -156,6 +156,10 @@ body {
   cursor: pointer;
 }
 
+.other-cash-button:hover {
+  background-color: #777b83;
+}
+
 /* service boxes */
 .non-cash-services {
   display: flex;
@@ -795,3 +799,23 @@ body {
   margin-bottom: 20px;
   font-size: 18px;
 }
+
+/* Customize text color for individual elements */
+.dark-theme .withdraw-heading,
+.dark-theme .text-2xl,
+.dark-theme .text-center,
+.dark-theme .transaction-info,
+.dark-theme .withdraw-message,
+.dark-theme .more-services {
+  color: black; 
+}
+
+.light-theme .withdraw-heading,
+.light-theme .text-2xl,
+.light-theme .text-center,
+.light-theme .transaction-info,
+.light-theme .more-services,
+.light-theme .withdraw-message {
+  color: rgb(0, 0, 0); 
+}
+
