@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import OCBCLogo from './images/OCBC-Logo.png';
 import { db, collection, addDoc, getDocs } from './firebaseConfig';
-import WatsonChat from './WatsonChat';
 
 interface LocationState {
   userID: string;
@@ -177,7 +176,6 @@ const Shortcuts: React.FC = () => {
           <button onClick={() => navigate('/home', { state: { userID } })} className="go-back-button1">Go Back</button>
         </div>
       </div>
-      <WatsonChat /> {/* Add Watson Chat component here */}
     </div>
   );
 };

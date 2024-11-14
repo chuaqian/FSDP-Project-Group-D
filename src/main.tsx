@@ -15,6 +15,7 @@ import Withdraw from './Withdraw';
 
 createRoot(document.getElementById('root')!).render(
     <Router>
+      <WatsonChat />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/CardLogin" element={<CardLogin />} />
@@ -22,7 +23,6 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/preferences" element={<Preference />} />
         <Route path="/shortcuts" element={<Shortcuts />} /> 
         <Route path="/QRScanner" element={<QRScanner />} />
-        <Route path="/watsonchat" element={<WatsonChat />} /> 
         <Route path="/transaction-confirmation" element={<TransactionConfirmation />} />
         <Route path="/OtherAmounts" element={<OtherAmounts />} />
         <Route path="/withdraw" element={<Withdraw />} />
