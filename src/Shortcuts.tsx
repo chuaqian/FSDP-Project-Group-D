@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import OCBCLogo from './images/OCBC-Logo.png';
 import { db } from './firebaseConfig';
 import { collection, addDoc, getDocs, doc, getDoc } from "firebase/firestore";
-import WatsonChat from './WatsonChat';
 
 interface LocationState {
   userID: string;
@@ -223,7 +222,6 @@ const Shortcuts: React.FC = () => {
           </button>
         </div>
       </div>
-      <WatsonChat />
     </div>
   );
 };

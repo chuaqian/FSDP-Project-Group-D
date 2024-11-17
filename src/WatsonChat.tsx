@@ -11,7 +11,11 @@ const WatsonChat = () => {
         region: "us-south",
         serviceInstanceID: "e06e3735-bcd4-4600-8be4-77e6ad84af58",
         onLoad: async (instance: any) => {
-          await instance.render();
+          try {
+            await instance.render();
+          } catch (error) {
+            console.error("Error loading Watson Assistant instance:", error);
+          }
         }
       };
 
