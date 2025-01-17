@@ -819,3 +819,66 @@ body {
   color: rgb(0, 0, 0); 
 }
 
+.homeContent {
+  width: 100%;
+  max-width: 900px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.home-title {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.homeGrid {
+  display: flex;
+  gap: 20px;
+}
+
+.serviceBox {
+  background-color: #e8e6e6;
+  border-radius: 8px;
+  margin-top: 20px;
+  padding: 25px 90px;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  justify-content: left;
+}
+
+.serviceBox:hover {
+  background-color: #898989;
+  color: white;
+}
+
+.backButton {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.backButton:hover {
+  background-color: #90b4db;
+}
+
+.more-link:hover {
+  color: #005fc5; 
+}
+
+.more-services {
+  text-align: right; 
+  margin-top: 5px; 
+  margin-right: 10px;
+  font-weight: 550;
+}
+
