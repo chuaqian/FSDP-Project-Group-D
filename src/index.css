@@ -176,7 +176,18 @@ body {
   font-size: 1rem;
   font-weight: 500;
 }
-
+/* navigation button for liquidate page */
+.liquidate-nav-button {
+  background-color: #333333;
+  color: white;
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: var(--button-font-size);
+  width: 100%;
+}
 /* navigation button */
 .preference-nav-button {
   background-color: #2563eb;

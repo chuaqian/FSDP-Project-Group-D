@@ -13,6 +13,7 @@ import TransactionConfirmation from './TransactionConfirmation';
 import OtherAmounts from './OtherAmounts';
 import Withdraw from './Withdraw';  
 import MoreServices from './MoreServices';
+import Investments from './investments';
 
 createRoot(document.getElementById('root')!).render(
     <Router>
@@ -28,6 +29,7 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/OtherAmounts" element={<OtherAmounts />} />
         <Route path="/withdraw" element={<Withdraw />} />
         <Route path="/MoreServices" element={<MoreServices />} /> 
+        <Route path="/investments" element={<Investments />} />
       </Routes>
     </Router>
 );

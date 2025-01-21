@@ -158,7 +158,9 @@ const Home = () => {
 
           <div className="non-cash-services">
             <div className="service-box" onClick={() => handleTextClick('Deposit Cash')}>Deposit Cash</div>
-            <div className="service-box" onClick={() => handleTextClick('Ask about Balance')}>Ask about Balance</div>
+            <div className="liquidate-investments-button">
+              <button {...handleButtonClick('Liquidate Investments', () => navigate('/investments', { state: { userID, theme }}))} className="liquidate-nav-button">Liquidate Investments</button>
+            </div>
 
             <div className="preferences-button">
               <button {...handleButtonClick('Preferences', () => navigate('/preferences', { state: { userID } }))} className="preference-nav-button">Preferences</button>

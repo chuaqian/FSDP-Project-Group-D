@@ -19,6 +19,7 @@ const db = getFirestore(app); // Initialize Firestore
 const auth = getAuth(app);
 // user pref
 const getUserPreferencesRef = (uid: string) => doc(db, "preferences", uid);
+const getUserInvestmentsRef = (uid: string) => collection(db, "investments", uid);
 
 // Export Firestore functions and auth
-export { app, auth, db, collection, doc, addDoc, getDocs, setDoc, getUserPreferencesRef }; // Add setDoc to exports
+export { app, auth, db, collection, doc, addDoc, getDocs, setDoc, getUserPreferencesRef, getUserInvestmentsRef }; // Add setDoc to exports
