@@ -44,7 +44,7 @@ const Investments: React.FC = () => {
   const [investmentStatus, setInvestmentStatus] = useState(false);
   const [stockOptions, setStockOptions] = useState<{ name: string; symbol: string }[]>([]);
   const [newStock, setNewStock] = useState("");
-  const [units, setUnits] = useState<number>(0);
+  const [units, setUnits] = useState<number | "">(""); // Allow empty string for controlled input
   const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
@@ -56,18 +56,22 @@ const Investments: React.FC = () => {
   useEffect(() => {
     const fetchPreferencesAndStatus = async () => {
       if (userID) {
-        const preferencesRef = doc(db, "preferences", userID);
-        const investmentsRef = doc(db, "investments", userID);
-        const preferencesSnap = await getDoc(preferencesRef);
-        const investmentsSnap = await getDoc(investmentsRef);
+        try {
+          const preferencesRef = doc(db, "preferences", userID);
+          const investmentsRef = doc(db, "investments", userID);
+          const preferencesSnap = await getDoc(preferencesRef);
+          const investmentsSnap = await getDoc(investmentsRef);
 
-        if (preferencesSnap.exists()) {
-          const data = preferencesSnap.data();
-          setTheme(data.theme || "light");
-        }
+          if (preferencesSnap.exists()) {
+            const data = preferencesSnap.data();
+            setTheme(data.theme || "light");
+          }
 
-        if (investmentsSnap.exists()) {
-          setInvestmentStatus(investmentsSnap.data().investmentStatus || false);
+          if (investmentsSnap.exists()) {
+            setInvestmentStatus(investmentsSnap.data().investmentStatus || false);
+          }
+        } catch (err) {
+          console.error("Error fetching preferences or investment status:", err);
         }
       } else {
         navigate("/");
@@ -76,28 +80,30 @@ const Investments: React.FC = () => {
 
     fetchPreferencesAndStatus();
   }, [userID, navigate]);
-  console.log("User ID in investments:", userID);
 
   // Fetch user investments
   useEffect(() => {
     const fetchInvestments = async () => {
       if (investmentStatus && userID) {
-        const investmentsRef = collection(db, "users", userID, "investments");
-        const querySnapshot = await getDocs(investmentsRef);
-        const fetchedInvestments: Investment[] = [];
+        try {
+          const investmentsRef = collection(db, "users", userID, "investments");
+          const querySnapshot = await getDocs(investmentsRef);
+          const fetchedInvestments: Investment[] = [];
 
-        querySnapshot.forEach((doc) => {
-          fetchedInvestments.push({
-            id: doc.id,
-            name: doc.data().name,
-            symbol: doc.data().symbol,
-            units: doc.data().units,
+          querySnapshot.forEach((doc) => {
+            fetchedInvestments.push({
+              id: doc.id,
+              name: doc.data().name,
+              symbol: doc.data().symbol,
+              units: doc.data().units,
+            });
           });
-        });
 
-        setInvestments(fetchedInvestments);
+          setInvestments(fetchedInvestments);
+        } catch (err) {
+          console.error("Error fetching investments:", err);
+        }
       }
-
       setLoading(false);
     };
 
@@ -106,13 +112,14 @@ const Investments: React.FC = () => {
 
   // Add new investment
   const addInvestment = async () => {
-    if (!userID || !newStock || units <= 0) return;
+    if (!userID || !newStock || !units || units <= 0) {
+      alert("Please select a stock and enter a valid number of units.");
+      return;
+    }
 
     try {
       const investmentsRef = collection(db, "users", userID, "investments");
-      const stockDetails = stockOptions.find(
-        (stock) => stock.symbol === newStock
-      );
+      const stockDetails = stockOptions.find((stock) => stock.symbol === newStock);
 
       if (stockDetails) {
         await setDoc(doc(investmentsRef, stockDetails.symbol), {
@@ -121,20 +128,23 @@ const Investments: React.FC = () => {
           units: units,
         });
 
-        setInvestmentStatus(true);
-        setNewStock("");
-        setUnits(0);
+        setInvestments([
+          ...investments,
+          { id: stockDetails.symbol, name: stockDetails.name, symbol: stockDetails.symbol, units },
+        ]);
 
-        // Update global investmentStatus
         await setDoc(doc(db, "investments", userID), {
           investmentStatus: true,
         });
 
+        setInvestmentStatus(true);
+        setNewStock("");
+        setUnits("");
+
         alert("Investment added successfully!");
-        window.location.reload();
       }
-    } catch (error) {
-      console.error("Error adding investment:", error);
+    } catch (err) {
+      console.error("Error adding investment:", err);
     }
   };
 
@@ -161,12 +171,13 @@ const Investments: React.FC = () => {
           symbol: result["1. symbol"],
         }))
       );
-    } catch (error) {
-      console.error("Error fetching stock options:", error);
+    } catch (err) {
+      console.error("Error fetching stock options:", err);
       setError("Failed to fetch stock options.");
     }
   };
 
+  // Fetch graph data for chart rendering
   const fetchGraphData = async (symbol: string) => {
     try {
       const response = await axios.get<TimeSeriesDailyResponse>(AlphaVantageAPI, {
@@ -183,7 +194,6 @@ const Investments: React.FC = () => {
         parseFloat(timeSeries[date]["4. close"])
       );
 
-      // Render Chart
       const canvas = document.getElementById(`chart-${symbol}`) as HTMLCanvasElement;
       new Chart(canvas, {
         type: "line",
@@ -200,8 +210,8 @@ const Investments: React.FC = () => {
           ],
         },
       });
-    } catch (error) {
-      console.error("Error fetching graph data:", error);
+    } catch (err) {
+      console.error("Error fetching graph data:", err);
     }
   };
 
@@ -215,31 +225,26 @@ const Investments: React.FC = () => {
 
   return (
     <div className={`investments-container ${theme === "dark" ? "dark-theme" : "light-theme"}`}>
-      <img src={OCBCLogo} alt="OCBC Logo" className="fixed-logo large-logo" />
-
+      <div className="header">
+        <img src={OCBCLogo} alt="OCBC Logo" className="fixed-logo" />
+        <h1>{investmentStatus ? "Your Investments" : "No Investments Linked"}</h1>
+      </div>
       {investmentStatus ? (
-        <>
-          <h1>Your Investments</h1>
-          {investments.map((investment) => (
-            <div key={investment.id} className="investment-card">
-              <h2>{investment.name} ({investment.symbol})</h2>
-              <p>Units: {investment.units}</p>
-              <canvas id={`chart-${investment.symbol}`} width="400" height="200"></canvas>
-            </div>
-          ))}
-        </>
+        investments.map((investment) => (
+          <div key={investment.id} className="investment-card">
+            <h2>{investment.name} ({investment.symbol})</h2>
+            <p>Units: {investment.units}</p>
+            <canvas id={`chart-${investment.symbol}`} width="400" height="200"></canvas>
+          </div>
+        ))
       ) : (
-        <div>
-          <h1>No Investments Linked</h1>
+        <div className="centered-container">
           <input
             type="text"
             placeholder="Search stock..."
             onChange={(e) => fetchStockOptions(e.target.value)}
           />
-          <select
-            value={newStock}
-            onChange={(e) => setNewStock(e.target.value)}
-          >
+          <select value={newStock} onChange={(e) => setNewStock(e.target.value)}>
             {stockOptions.map((stock) => (
               <option key={stock.symbol} value={stock.symbol}>
                 {stock.name} ({stock.symbol})
@@ -249,8 +254,8 @@ const Investments: React.FC = () => {
           <input
             type="number"
             placeholder="Units"
-            value={units}
-            onChange={(e) => setUnits(parseInt(e.target.value))}
+            value={units === "" ? "" : units}
+            onChange={(e) => setUnits(e.target.value ? parseInt(e.target.value) : "")}
           />
           <button onClick={addInvestment}>Add Investment</button>
         </div>
