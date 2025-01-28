@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { collection, getDocs, doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore"; // Added setDoc
 import { db } from "./firebaseConfig";
 import axios from "axios";
-import Chart from "chart.js/auto"; // For graph rendering
+import Chart from "chart.js/auto";
 import OCBCLogo from "./images/OCBC-Logo.png";
 
 interface Investment {
@@ -19,207 +19,184 @@ interface LocationState {
   theme?: string;
 }
 
-interface AlphaVantageResponse {
-  bestMatches: {
-    "1. symbol": string;
-    "2. name": string;
-  }[];
-}
-
-interface TimeSeriesDailyResponse {
-  "Time Series (Daily)": {
-    [date: string]: {
-      "4. close": string;
-    };
-  };
+interface TimeSeriesResponse {
+  Note?: string;
+  "Error Message"?: string;
+  "Time Series (60min)"?: Record<string, { "4. close": string }>;
+  "Weekly Time Series"?: Record<string, { "4. close": string }>;
+  "Monthly Time Series"?: Record<string, { "4. close": string }>;
 }
 
 const AlphaVantageAPI = "https://www.alphavantage.co/query";
-const API_KEY = "CGXHLVNW7NF2NM3I"; // Replace with your Alpha Vantage API key
+const API_KEY = "VJI2Z5BJA4CPU9OT";
 
 const Investments: React.FC = () => {
   const [investments, setInvestments] = useState<Investment[]>([]);
   const [theme, setTheme] = useState("light");
   const [loading, setLoading] = useState(true);
-  const [investmentStatus, setInvestmentStatus] = useState(false);
-  const [stockOptions, setStockOptions] = useState<{ name: string; symbol: string }[]>([]);
-  const [newStock, setNewStock] = useState("");
-  const [units, setUnits] = useState<number | "">(""); // Allow empty string for controlled input
-  const [error, setError] = useState<string | null>(null);
+  const [selectedView, setSelectedView] = useState<"daily" | "weekly" | "monthly">("daily");
+  const [investmentStatus, setInvestmentStatus] = useState<boolean>(false); // Added investmentStatus
 
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as LocationState;
   const userID = state?.userID;
 
-  // Fetch user preferences and investmentStatus
   useEffect(() => {
-    const fetchPreferencesAndStatus = async () => {
-      if (userID) {
-        try {
-          const preferencesRef = doc(db, "preferences", userID);
-          const investmentsRef = doc(db, "investments", userID);
-          const preferencesSnap = await getDoc(preferencesRef);
-          const investmentsSnap = await getDoc(investmentsRef);
-
-          if (preferencesSnap.exists()) {
-            const data = preferencesSnap.data();
-            setTheme(data.theme || "light");
-          }
-
-          if (investmentsSnap.exists()) {
-            setInvestmentStatus(investmentsSnap.data().investmentStatus || false);
-          }
-        } catch (err) {
-          console.error("Error fetching preferences or investment status:", err);
-        }
-      } else {
+    const fetchUserData = async () => {
+      if (!userID) {
         navigate("/");
+        return;
+      }
+
+      try {
+        const preferencesRef = doc(db, "preferences", userID);
+        const preferencesSnap = await getDoc(preferencesRef);
+
+        if (preferencesSnap.exists()) {
+          const data = preferencesSnap.data();
+          setTheme(data.theme || "light");
+        }
+
+        const investmentsRef = doc(db, "investments", userID);
+        const investmentsSnap = await getDoc(investmentsRef);
+
+        if (investmentsSnap.exists()) {
+          const data = investmentsSnap.data();
+          const investmentsArray = data.investments || [];
+          setInvestments(investmentsArray);
+          setInvestmentStatus(data.investmentStatus || false); // Set investmentStatus
+        } else {
+          setInvestments([]);
+        }
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchPreferencesAndStatus();
+    fetchUserData();
   }, [userID, navigate]);
 
-  // Fetch user investments
-  useEffect(() => {
-    const fetchInvestments = async () => {
-      if (investmentStatus && userID) {
-        try {
-          const investmentsRef = collection(db, "users", userID, "investments");
-          const querySnapshot = await getDocs(investmentsRef);
-          const fetchedInvestments: Investment[] = [];
-
-          querySnapshot.forEach((doc) => {
-            fetchedInvestments.push({
-              id: doc.id,
-              name: doc.data().name,
-              symbol: doc.data().symbol,
-              units: doc.data().units,
-            });
-          });
-
-          setInvestments(fetchedInvestments);
-        } catch (err) {
-          console.error("Error fetching investments:", err);
-        }
-      }
-      setLoading(false);
-    };
-
-    fetchInvestments();
-  }, [investmentStatus, userID]);
-
-  // Add new investment
-  const addInvestment = async () => {
-    if (!userID || !newStock || !units || units <= 0) {
-      alert("Please select a stock and enter a valid number of units.");
-      return;
-    }
-
-    try {
-      const investmentsRef = collection(db, "users", userID, "investments");
-      const stockDetails = stockOptions.find((stock) => stock.symbol === newStock);
-
-      if (stockDetails) {
-        await setDoc(doc(investmentsRef, stockDetails.symbol), {
-          name: stockDetails.name,
-          symbol: stockDetails.symbol,
-          units: units,
-        });
-
-        setInvestments([
-          ...investments,
-          { id: stockDetails.symbol, name: stockDetails.name, symbol: stockDetails.symbol, units },
-        ]);
-
-        await setDoc(doc(db, "investments", userID), {
-          investmentStatus: true,
-        });
-
-        setInvestmentStatus(true);
-        setNewStock("");
-        setUnits("");
-
-        alert("Investment added successfully!");
-      }
-    } catch (err) {
-      console.error("Error adding investment:", err);
-    }
-  };
-
-  // Fetch stock options using Alpha Vantage API
-  const fetchStockOptions = async (searchQuery: string) => {
-    if (!searchQuery) {
-      setStockOptions([]);
-      return;
-    }
-
-    try {
-      const response = await axios.get<AlphaVantageResponse>(AlphaVantageAPI, {
-        params: {
-          function: "SYMBOL_SEARCH",
-          keywords: searchQuery,
-          apikey: API_KEY,
-        },
-      });
-
-      const results = response.data.bestMatches || [];
-      setStockOptions(
-        results.map((result) => ({
-          name: result["2. name"],
-          symbol: result["1. symbol"],
-        }))
-      );
-    } catch (err) {
-      console.error("Error fetching stock options:", err);
-      setError("Failed to fetch stock options.");
-    }
-  };
-
-  // Fetch graph data for chart rendering
   const fetchGraphData = async (symbol: string) => {
     try {
-      const response = await axios.get<TimeSeriesDailyResponse>(AlphaVantageAPI, {
+      const timeSeriesFunctions: Record<string, string> = {
+        daily: "TIME_SERIES_INTRADAY",
+        weekly: "TIME_SERIES_WEEKLY",
+        monthly: "TIME_SERIES_MONTHLY",
+      };
+
+      const response = await axios.get<TimeSeriesResponse>(AlphaVantageAPI, {
         params: {
-          function: "TIME_SERIES_DAILY",
-          symbol: symbol,
+          function: timeSeriesFunctions[selectedView],
+          symbol,
+          interval: selectedView === "daily" ? "60min" : undefined,
           apikey: API_KEY,
         },
       });
 
-      const timeSeries = response.data["Time Series (Daily)"];
-      const labels = Object.keys(timeSeries).slice(0, 10).reverse();
-      const data = labels.map((date) =>
-        parseFloat(timeSeries[date]["4. close"])
-      );
+      if (response.data.Note) {
+        console.warn("API Rate Limit Exceeded:", response.data.Note);
+        alert("API rate limit exceeded. Please try again later.");
+        return null;
+      }
 
-      const canvas = document.getElementById(`chart-${symbol}`) as HTMLCanvasElement;
-      new Chart(canvas, {
-        type: "line",
-        data: {
-          labels,
-          datasets: [
-            {
-              label: `${symbol} Price`,
-              data,
-              backgroundColor: "rgba(75, 192, 192, 0.2)",
-              borderColor: "rgba(75, 192, 192, 1)",
-              borderWidth: 2,
-            },
-          ],
-        },
-      });
+      if (response.data["Error Message"]) {
+        console.error("Invalid or Expired API Key:", response.data["Error Message"]);
+        alert("Invalid or expired API key. Please use a valid API key.");
+        return null;
+      }
+
+      const timeSeriesKey =
+        selectedView === "daily"
+          ? "Time Series (60min)"
+          : selectedView === "weekly"
+          ? "Weekly Time Series"
+          : "Monthly Time Series";
+
+      const timeSeries = (response.data as any)[timeSeriesKey];
+
+      if (!timeSeries) {
+        alert(`Data unavailable for ${symbol}.`);
+        return null;
+      }
+
+      const labels = Object.keys(timeSeries).slice(0, 10).reverse();
+      const data = labels.map((date) => parseFloat(timeSeries[date]["4. close"]));
+
+      return { labels, data };
     } catch (err) {
       console.error("Error fetching graph data:", err);
+      return null;
+    }
+  };
+
+  const addStockToFirestore = async () => {
+    if (!userID) {
+      alert("User not logged in!");
+      return;
+    }
+
+    try {
+      const investmentsRef = doc(db, "investments", userID);
+      const investmentsSnap = await getDoc(investmentsRef);
+
+      let currentInvestments: Investment[] = [];
+      if (investmentsSnap.exists()) {
+        currentInvestments = investmentsSnap.data()?.investments || [];
+      }
+
+      // Add NVDA and TSLA stocks
+      const newStocks: Investment[] = [
+        { id: "NVDA", name: "NVIDIA Corp", symbol: "NVDA", units: 10 },
+        { id: "TSLA", name: "Tesla Inc", symbol: "TSLA", units: 5 },
+      ];
+
+      const updatedInvestments = [...currentInvestments, ...newStocks];
+
+      await updateDoc(investmentsRef, {
+        investments: updatedInvestments,
+        investmentStatus: true, // Update investmentStatus to true
+      });
+
+      setInvestments(updatedInvestments);
+      setInvestmentStatus(true); // Update local state
+      alert("Added NVDA and TSLA stocks!");
+    } catch (error) {
+      console.error("Error adding stocks:", error);
+      alert("Failed to add stocks. Try again.");
     }
   };
 
   useEffect(() => {
-    investments.forEach((investment) => {
-      fetchGraphData(investment.symbol);
-    });
-  }, [investments]);
+    const renderGraphs = async () => {
+      investments.forEach(async (investment) => {
+        const graphData = await fetchGraphData(investment.symbol);
+
+        if (graphData) {
+          const canvas = document.getElementById(`chart-${investment.symbol}`) as HTMLCanvasElement;
+          new Chart(canvas, {
+            type: "line",
+            data: {
+              labels: graphData.labels,
+              datasets: [
+                {
+                  label: `${investment.symbol} ${selectedView.charAt(0).toUpperCase() + selectedView.slice(1)} Price`,
+                  data: graphData.data,
+                  backgroundColor: "rgba(75, 192, 192, 0.2)",
+                  borderColor: "rgba(75, 192, 192, 1)",
+                  borderWidth: 2,
+                },
+              ],
+            },
+          });
+        }
+      });
+    };
+
+    renderGraphs();
+  }, [investments, selectedView]);
 
   if (loading) return <div>Loading...</div>;
 
@@ -227,38 +204,45 @@ const Investments: React.FC = () => {
     <div className={`investments-container ${theme === "dark" ? "dark-theme" : "light-theme"}`}>
       <div className="header">
         <img src={OCBCLogo} alt="OCBC Logo" className="fixed-logo" />
-        <h1>{investmentStatus ? "Your Investments" : "No Investments Linked"}</h1>
+        <h1>{investments.length > 0 ? "Your Investments" : "No Investments Linked"}</h1>
+        {!investmentStatus && (
+          <button className="add-stock-button" onClick={addStockToFirestore}>
+            Add NVDA & TSLA Stocks
+          </button>
+        )}
       </div>
-      {investmentStatus ? (
+      {investments.length > 0 ? (
         investments.map((investment) => (
           <div key={investment.id} className="investment-card">
-            <h2>{investment.name} ({investment.symbol})</h2>
+            <h2>
+              {investment.name} ({investment.symbol})
+            </h2>
             <p>Units: {investment.units}</p>
             <canvas id={`chart-${investment.symbol}`} width="400" height="200"></canvas>
+            <div className="investment-time-container">
+              <button
+                onClick={() => setSelectedView("daily")}
+                className={selectedView === "daily" ? "active" : ""}
+              >
+                Daily
+              </button>
+              <button
+                onClick={() => setSelectedView("weekly")}
+                className={selectedView === "weekly" ? "active" : ""}
+              >
+                Weekly
+              </button>
+              <button
+                onClick={() => setSelectedView("monthly")}
+                className={selectedView === "monthly" ? "active" : ""}
+              >
+                Monthly
+              </button>
+            </div>
           </div>
         ))
       ) : (
-        <div className="centered-container">
-          <input
-            type="text"
-            placeholder="Search stock..."
-            onChange={(e) => fetchStockOptions(e.target.value)}
-          />
-          <select value={newStock} onChange={(e) => setNewStock(e.target.value)}>
-            {stockOptions.map((stock) => (
-              <option key={stock.symbol} value={stock.symbol}>
-                {stock.name} ({stock.symbol})
-              </option>
-            ))}
-          </select>
-          <input
-            type="number"
-            placeholder="Units"
-            value={units === "" ? "" : units}
-            onChange={(e) => setUnits(e.target.value ? parseInt(e.target.value) : "")}
-          />
-          <button onClick={addInvestment}>Add Investment</button>
-        </div>
+        <p>No investments to display. Add investments to see details.</p>
       )}
     </div>
   );

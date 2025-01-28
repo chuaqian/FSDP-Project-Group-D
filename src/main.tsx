@@ -30,6 +30,7 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/withdraw" element={<Withdraw />} />
         <Route path="/MoreServices" element={<MoreServices />} /> 
         <Route path="/investments" element={<Investments />} />
+        
       </Routes>
     </Router>
 );

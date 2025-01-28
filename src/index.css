@@ -914,7 +914,7 @@ body {
   margin-bottom: 20px;
 }
 
-.centered-container {
+.centered-container-investment {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -963,3 +963,51 @@ button:hover {
   text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
+.investment-time-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.investment-time-container button {
+  background-color: #7d7b7b;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  margin: 0 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.investment-time-container button:hover {
+  background-color: #4a4a4a;
+}
+
+.investment-time-container button.active {
+  background-color: #101010;
+  font-weight: bold;
+}
+
+.add-stock-button {
+  position: fixed; /* Fix it at the top-right corner */
+  top: 20px;
+  right: 20px;
+  background-color: #565656;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  z-index: 1000; /* Ensure it's above other elements */
+  width: auto; /* Override global button width */
+  transition: background-color 0.3s ease;
+}
+
+.add-stock-button:hover {
+  background-color: #3d3e3e;
+}
+
+
