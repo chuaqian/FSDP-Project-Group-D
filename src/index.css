@@ -1009,5 +1009,92 @@ button:hover {
 .add-stock-button:hover {
   background-color: #3d3e3e;
 }
+.liquidate-container {
+  text-align: center;
+  margin: 20px auto;
+  max-width: 50%
+}
+
+.investment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.investment-item {
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.investment-item.selected {
+  background-color: #2563eb;
+  color: white;
+}
+
+.investment-item:hover {
+  background-color: #f1f5f9;
+}
+
+/* Liquidate.tsx */
+.liquidate-container {
+  text-align: center;
+  padding: 20px;
+}
+
+.investment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.investment-item {
+  padding: 15px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #f9f9f9;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.investment-item:hover {
+  background-color: #f1f1f1;
+}
+
+.investment-item.selected {
+  border-color: #035d09;
+  background-color: #08b814;
+}
+
+.investment-details {
+  margin-top: 20px;
+}
+
+.price-info {
+  margin-bottom: 15px;
+}
+
+.confirmation-modal {
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px auto;
+  width: 60%;
+}
+
+
+.cancel-button {
+  background-color: #6b7280;
+  color: white;
+  margin-top: 10px;
+  padding: 10px 20px;
+  border-radius: 6px;
+}
+
 
 

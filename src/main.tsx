@@ -14,6 +14,7 @@ import OtherAmounts from './OtherAmounts';
 import Withdraw from './Withdraw';  
 import MoreServices from './MoreServices';
 import Investments from './investments';
+import LiquidateInvestment from './LiquidateInvestment';
 
 createRoot(document.getElementById('root')!).render(
     <Router>
@@ -30,6 +31,7 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/withdraw" element={<Withdraw />} />
         <Route path="/MoreServices" element={<MoreServices />} /> 
         <Route path="/investments" element={<Investments />} />
+        <Route path="/LiquidateInvestment" element={<LiquidateInvestment />} />
         
       </Routes>
     </Router>

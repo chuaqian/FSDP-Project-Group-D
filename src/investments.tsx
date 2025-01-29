@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore"; // Added setDoc
+import { doc, getDoc, updateDoc } from "firebase/firestore"; // Added updateDoc
 import { db } from "./firebaseConfig";
 import axios from "axios";
 import Chart from "chart.js/auto";
@@ -35,12 +35,13 @@ const Investments: React.FC = () => {
   const [theme, setTheme] = useState("light");
   const [loading, setLoading] = useState(true);
   const [selectedView, setSelectedView] = useState<"daily" | "weekly" | "monthly">("daily");
-  const [investmentStatus, setInvestmentStatus] = useState<boolean>(false); // Added investmentStatus
+  const [investmentStatus, setInvestmentStatus] = useState<boolean>(false);
 
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as LocationState;
   const userID = state?.userID;
+  const chartsRef = useRef<Map<string, Chart>>(new Map()); // Manage charts by symbol
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -65,7 +66,7 @@ const Investments: React.FC = () => {
           const data = investmentsSnap.data();
           const investmentsArray = data.investments || [];
           setInvestments(investmentsArray);
-          setInvestmentStatus(data.investmentStatus || false); // Set investmentStatus
+          setInvestmentStatus(data.investmentStatus || false);
         } else {
           setInvestments([]);
         }
@@ -132,6 +133,44 @@ const Investments: React.FC = () => {
     }
   };
 
+  const renderGraph = async (investment: Investment) => {
+    const graphData = await fetchGraphData(investment.symbol);
+    if (!graphData) return;
+
+    const canvas = document.getElementById(`chart-${investment.symbol}`) as HTMLCanvasElement;
+
+    // Destroy existing chart for this symbol if it exists
+    if (chartsRef.current.has(investment.symbol)) {
+      chartsRef.current.get(investment.symbol)?.destroy();
+      chartsRef.current.delete(investment.symbol);
+    }
+
+    // Create and save the new chart instance
+    const newChart = new Chart(canvas, {
+      type: "line",
+      data: {
+        labels: graphData.labels,
+        datasets: [
+          {
+            label: `${investment.symbol} ${selectedView.charAt(0).toUpperCase() + selectedView.slice(1)} Price`,
+            data: graphData.data,
+            backgroundColor: "rgba(75, 192, 192, 0.2)",
+            borderColor: "rgba(75, 192, 192, 1)",
+            borderWidth: 2,
+          },
+        ],
+      },
+    });
+
+    chartsRef.current.set(investment.symbol, newChart);
+  };
+
+  useEffect(() => {
+    investments.forEach((investment) => {
+      renderGraph(investment);
+    });
+  }, [investments, selectedView]);
+
   const addStockToFirestore = async () => {
     if (!userID) {
       alert("User not logged in!");
@@ -147,7 +186,6 @@ const Investments: React.FC = () => {
         currentInvestments = investmentsSnap.data()?.investments || [];
       }
 
-      // Add NVDA and TSLA stocks
       const newStocks: Investment[] = [
         { id: "NVDA", name: "NVIDIA Corp", symbol: "NVDA", units: 10 },
         { id: "TSLA", name: "Tesla Inc", symbol: "TSLA", units: 5 },
@@ -157,46 +195,17 @@ const Investments: React.FC = () => {
 
       await updateDoc(investmentsRef, {
         investments: updatedInvestments,
-        investmentStatus: true, // Update investmentStatus to true
+        investmentStatus: true,
       });
 
       setInvestments(updatedInvestments);
-      setInvestmentStatus(true); // Update local state
+      setInvestmentStatus(true);
       alert("Added NVDA and TSLA stocks!");
     } catch (error) {
       console.error("Error adding stocks:", error);
       alert("Failed to add stocks. Try again.");
     }
   };
-
-  useEffect(() => {
-    const renderGraphs = async () => {
-      investments.forEach(async (investment) => {
-        const graphData = await fetchGraphData(investment.symbol);
-
-        if (graphData) {
-          const canvas = document.getElementById(`chart-${investment.symbol}`) as HTMLCanvasElement;
-          new Chart(canvas, {
-            type: "line",
-            data: {
-              labels: graphData.labels,
-              datasets: [
-                {
-                  label: `${investment.symbol} ${selectedView.charAt(0).toUpperCase() + selectedView.slice(1)} Price`,
-                  data: graphData.data,
-                  backgroundColor: "rgba(75, 192, 192, 0.2)",
-                  borderColor: "rgba(75, 192, 192, 1)",
-                  borderWidth: 2,
-                },
-              ],
-            },
-          });
-        }
-      });
-    };
-
-    renderGraphs();
-  }, [investments, selectedView]);
 
   if (loading) return <div>Loading...</div>;
 
@@ -207,7 +216,7 @@ const Investments: React.FC = () => {
         <h1>{investments.length > 0 ? "Your Investments" : "No Investments Linked"}</h1>
         {!investmentStatus && (
           <button className="add-stock-button" onClick={addStockToFirestore}>
-            Add NVDA & TSLA Stocks
+            Add Stocks
           </button>
         )}
       </div>
@@ -243,6 +252,14 @@ const Investments: React.FC = () => {
         ))
       ) : (
         <p>No investments to display. Add investments to see details.</p>
+      )}
+      {investments.length > 0 && (
+        <button
+          className="liquidate-container"
+          onClick={() => navigate("/liquidateinvestment", { state: { investments, userID } })}
+        >
+          Liquidate Investment
+        </button>
       )}
     </div>
   );
