@@ -28,7 +28,7 @@ interface TimeSeriesResponse {
 }
 
 const AlphaVantageAPI = "https://www.alphavantage.co/query";
-const API_KEY = "VJI2Z5BJA4CPU9OT";
+const API_KEY = import.meta.env.VITE_ALPHA_VANTAGE_API_KEY;
 
 const Investments: React.FC = () => {
   const [investments, setInvestments] = useState<Investment[]>([]);

@@ -18,7 +18,7 @@ interface LocationState {
 }
 
 const AlphaVantageAPI = "https://www.alphavantage.co/query";
-const API_KEY = "NIWBQ9O7VEE8I854";
+const API_KEY = import.meta.env.VITE_ALPHA_VANTAGE_API_KEY;
 
 const LiquidateInvestment: React.FC = () => {
   const location = useLocation();
