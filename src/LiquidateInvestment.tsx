@@ -30,6 +30,8 @@ const LiquidateInvestment: React.FC = () => {
   const [loadingPrice, setLoadingPrice] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [unitsToSell, setUnitsToSell] = useState<number>(0);
+  const [isDispensing, setIsDispensing] = useState(false);
+  const [dispenseAmount, setDispenseAmount] = useState<number | null>(null);
 
   const SGD_CONVERSION_RATE = 1.35;
 
@@ -90,9 +92,9 @@ const LiquidateInvestment: React.FC = () => {
 
   const handleSelectInvestment = (investment: Investment) => {
     setSelectedInvestment(investment);
-    setCurrentPrice(null); // Clear old price
-    setUnitsToSell(0); // Reset input
-    fetchStockData(investment.symbol); // Fetch new data
+    setCurrentPrice(null);
+    setUnitsToSell(0);
+    fetchStockData(investment.symbol);
   };
 
   const handleConfirmLiquidation = async () => {
@@ -116,15 +118,33 @@ const LiquidateInvestment: React.FC = () => {
         investmentStatus: updatedInvestments.length > 0,
       });
 
-      alert(
-        `${selectedInvestment.name} (${unitsToSell} units) has been liquidated for SGD ${(currentPrice! * SGD_CONVERSION_RATE * unitsToSell).toFixed(2)} Cash! Dispensing SGD ${(currentPrice! * SGD_CONVERSION_RATE * unitsToSell).toFixed(2)} cash now.`
-      );
-      navigate("/investments", { state: { userID } });
+      const amountToDispense = Math.round(
+        currentPrice! * SGD_CONVERSION_RATE * unitsToSell * 10
+      ) / 10;
+      setDispenseAmount(amountToDispense);
+      setIsDispensing(true);
     } catch (error) {
       console.error("Error liquidating investment:", error);
       alert("Failed to liquidate investment. Please try again.");
     }
   };
+
+  if (isDispensing) {
+    return (
+      <div className="dispense-container">
+        <h1 className="dispense-title">Thank You!</h1>
+        <p className="dispense-message">
+          Please wait while we dispense SGD {dispenseAmount?.toFixed(2)} cash.
+        </p>
+        <button
+          className="dispense-home-button"
+          onClick={() => navigate("/LandingPage")}
+        >
+          Logout
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="liquidate-container">
@@ -167,7 +187,7 @@ const LiquidateInvestment: React.FC = () => {
             value={unitsToSell}
             onChange={(e) => {
               const value = parseInt(e.target.value, 10);
-              setUnitsToSell(value > 0 ? value : 0); // Ensure valid numbers
+              setUnitsToSell(value > 0 ? value : 0);
             }}
             max={selectedInvestment.units}
             className="unit-input"
