@@ -1,6 +1,6 @@
 // preference.tsx
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from './firebaseConfig';
@@ -19,9 +19,9 @@ const Preference = () => {
 
   // Preferences states
   const [theme, setTheme] = useState('light');
-  const [font, setFont] = useState('Inter');
-  const [fontWeight, setFontWeight] = useState('normal');
-  const [iconSize, setIconSize] = useState('medium');
+  const [, setFont] = useState('Inter');
+  const [, setFontWeight] = useState('normal');
+  const [, setIconSize] = useState('medium');
   const [textToSpeech, setTextToSpeech] = useState(false);
 
   const [previewSettings, setPreviewSettings] = useState({

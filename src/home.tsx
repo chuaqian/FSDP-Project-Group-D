@@ -1,5 +1,5 @@
 // home.tsx
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from './firebaseConfig';
@@ -29,7 +29,7 @@ const Home = () => {
   const userID = state?.userID;
 
   // State to store user data
-  const [user, setUser] = useState<UserData | null>(null);
+  const [, setUser] = useState<UserData | null>(null);
 
   // Fetch the user details if userID is provided
   useEffect(() => {

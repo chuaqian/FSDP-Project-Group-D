@@ -1,7 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 :root {
   --text-color-dark: #ffffff;
   --text-color-light: #333333;

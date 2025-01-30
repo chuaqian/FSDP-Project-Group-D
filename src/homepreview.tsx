@@ -1,5 +1,4 @@
 // homepreview.tsx
-import React from 'react';
 
 interface Settings {
   theme: string;
