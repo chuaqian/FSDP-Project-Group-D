@@ -153,8 +153,11 @@ const LiquidateInvestment: React.FC = () => {
         <p className="dispense-message">
           Please wait while we dispense SGD {dispenseAmount?.toFixed(2)} cash.
         </p>
+        <button className="dispense-home-button" onClick={() => navigate("/investments", { state: { userID } })}>
+          Back to Investments
+        </button>
         <button
-          className="dispense-home-button"
+          className="dispense-landing-button"
           onClick={() => navigate("/")}
         >
           Logout
