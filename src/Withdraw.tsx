@@ -71,7 +71,7 @@ const Withdraw: React.FC = () => {
         </p>
         <button
           onClick={() => handleTextClick("Go Back")}
-          onDoubleClick={() => navigate('/OtherAmounts', { state: { userID, theme } })}
+          onDoubleClick={() => navigate('/Home', { state: { userID, theme } })}
           className="go-back-button3"
         >
           Go Back

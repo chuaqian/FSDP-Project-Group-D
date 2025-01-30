@@ -16,6 +16,9 @@ import MoreServices from './MoreServices';
 import Investments from './investments';
 import LiquidateInvestment from './LiquidateInvestment';
 import FaceIDLogin from './FaceIDLogin';
+import CurrencyExchange from './CurrencyExchange';
+import Transfer from './Transfer';
+import TransferSuccess from './TransferSuccess';
 
 createRoot(document.getElementById('root')!).render(
     <Router>
@@ -34,6 +37,9 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/investments" element={<Investments />} />
         <Route path="/LiquidateInvestment" element={<LiquidateInvestment />} />
         <Route path="/FaceIDLogin" element={<FaceIDLogin />} />
+        <Route path="/CurrencyExchange" element={<CurrencyExchange />} />
+        <Route path="/transfer" element={<Transfer />} />
+        <Route path="/transfersuccess" element={<TransferSuccess />} />
       </Routes>
     </Router>
 );

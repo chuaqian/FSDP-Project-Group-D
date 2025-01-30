@@ -10,29 +10,35 @@ interface LocationState {
 
 const MoreServices: React.FC = () => {
   const [textToSpeech, setTextToSpeech] = useState(false);
-    const location = useLocation();
+  const [theme, setTheme] = useState('light');
+  const location = useLocation();
   const navigate = useNavigate();
   const state = location.state as LocationState;
   const userID = state?.userID;
-  const theme = state?.theme;
 
   // Fetch user preferences for TTS 
   useEffect(() => {
-    const fetchPreferences = async () => {
-      if (userID) {
-        const preferencesRef = collection(db, "preferences");
-        const querySnapshot = await getDocs(preferencesRef);
-        querySnapshot.forEach((doc) => {
-          if (doc.id === userID) {
-            const data = doc.data();
-            setTextToSpeech(data.textToSpeech || false); // Set TTS preference
-          }
-        });
-      }
-    };
+    const savedTheme = state?.theme || localStorage.getItem('theme') || 'light'; // Load theme preference
+    setTheme(savedTheme); // Update theme state
+    console.log('Saved theme:', savedTheme);
+    document.documentElement.setAttribute('data-theme', savedTheme); // Apply theme to the document
 
-    fetchPreferences();
-  }, [userID]);
+    if (userID) {
+      fetchPreferences(userID);
+    }
+  }, [userID, state?.theme]);
+
+  const fetchPreferences = async (userID: string) => {
+    const preferencesRef = collection(db, "preferences");
+    const querySnapshot = await getDocs(preferencesRef);
+
+    querySnapshot.forEach((doc) => {
+      if (doc.id === userID) {
+        const data = doc.data();
+        setTextToSpeech(data.textToSpeech || false);
+      }
+    });
+  };
 
   // Text-to-speech function 
   const speak = (text: string) => {
@@ -48,6 +54,12 @@ const MoreServices: React.FC = () => {
     if (textToSpeech) speak(text); // Call speak function for TTS
     console.log(text); // Log the clicked text
   };
+
+  const handleNavigate = (page: string) => {
+    if (page === 'CurrencyExchange') {
+      navigate('/CurrencyExchange', { state: { userID, theme } });
+    }
+  }
   
   // Back button handler
   const handleBackClick = () => {
@@ -72,7 +84,7 @@ const MoreServices: React.FC = () => {
                 <div 
                   className="serviceBox" 
                   onClick={() => handleTextClick('Currency Exchange')}
-                  onDoubleClick={() => console.log('Currency Exchange Action')}
+                  onDoubleClick={() => handleNavigate ('CurrencyExchange')}
                   >
                     Currency Exchange
                 </div>

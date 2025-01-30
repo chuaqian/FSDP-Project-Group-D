@@ -174,7 +174,7 @@ const Home = () => {
               <p
                 className={`more-link ${theme === 'dark' ? 'text-white' : 'text-black'}`}
                 style={{ cursor: 'pointer' }}
-                {...handleButtonClick('More services', () => navigate('/MoreServices', { state: { userID } }))}
+                {...handleButtonClick('More services', () => navigate('/MoreServices', { state: { userID, theme } }))}
               >
                 More services &gt;
               </p>

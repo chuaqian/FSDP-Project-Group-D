@@ -52,6 +52,7 @@ body {
   top: 20px; /* Adjust spacing */
   right: 20px;
   height: auto;
+  width: 120px;
   z-index: 1000;
   background-color: #d9534f;
   color: #fff;
@@ -821,7 +822,13 @@ body {
 .dark-theme .text-center,
 .dark-theme .transaction-info,
 .dark-theme .withdraw-message,
-.dark-theme .more-services {
+.dark-theme .more-services ,
+.dark-theme .currency-exchange-heading,
+.dark-theme .currency-table th,
+.dark-theme .currency-table td,
+.dark-theme .dropdown-item,
+.dark-theme .conversion-box,
+.dark-theme .input-box1{
   color: black; 
 }
 
@@ -837,7 +844,7 @@ body {
 .homeContent {
   width: 100%;
   max-width: 900px;
-  background-color: #ffffff;
+  background-color: #5b5b5b;
   border-radius: 8px;
   padding: 30px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -855,7 +862,8 @@ body {
 }
 
 .serviceBox {
-  background-color: #e8e6e6;
+  background-color: #7e7e7e;
+  color: white;
   border-radius: 8px;
   margin-top: 20px;
   padding: 25px 90px;
@@ -874,6 +882,8 @@ body {
 
 .backButton {
   margin-top: 20px;
+  width: 300px;
+  height: 50px;
   padding: 10px 20px;
   background-color: #007BFF;
   color: white;
@@ -896,6 +906,7 @@ body {
   margin-right: 10px;
   font-weight: 550;
 }
+
 /* Investments.tsx */
 .investments-container {
   display: flex;
@@ -967,6 +978,7 @@ button:hover {
   text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
+
 .investment-time-container {
   display: flex;
   justify-content: center;
@@ -1256,4 +1268,314 @@ button:hover {
 
 .floating-action-button:hover {
   transform: scale(1.1);
+}
+
+/*CurrencyExchange pg*/
+.currency-container {
+  width: 55%; /* Ensure it takes full width */
+  max-height: 80vh; /* to control how much space it takes on the screen */
+  overflow-y: auto; /* Make it scrollable */
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  margin-top: 15px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 8px;
+  float: left; /* Align to the left */
+}
+
+.currency-table {
+  flex-grow: 1;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.currency-table th {
+  background-color: #f2f2f2;
+  padding: 12px 24px; /* Decrease padding to reduce box width */
+  font-size: 16px; 
+  width: auto; /* Ensures it adjusts to content size */
+  text-align: left;
+}
+
+.currency-table td {
+  padding: 12px 24px; /* Increase spacing */
+  text-align: left;
+  white-space: nowrap;
+}
+
+.currency-table th:first-child, 
+.currency-table td:first-child {
+  width: 40%; /* Make the 'Currency' column wider */
+}
+
+.currency-table th:last-child, 
+.currency-table td:last-child {
+  width: 60%; /* Make the 'Exchange Rate' column wider */
+}
+
+.currency-table th {
+  background-color: #f2f2f2;
+}
+
+
+.large-logo {
+  width: 150px; /* Adjust the logo size for large screens */
+}
+
+.currency-exchange-heading {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+/* Container for the currency table and search bar */
+.currency-search-container {
+  display: flex; /* Flexbox for side-by-side layout */
+  justify-content: space-between;
+  align-items: flex-start; /* Align both items to the top */
+  gap: 20px; /* Add space between the table and the search bar */
+}
+
+/* New container for the search bar and conversion box */
+.right-container {
+  display: flex;
+  flex-direction: column; /* Stack items vertically */
+  align-items: center; /* Center align items */
+  width: 300px; /* Match the conversion box width */
+}
+
+/* Search bar styling */
+.search-container {
+  width: 320px;
+  position: relative;
+  margin-top: 15px;
+  margin-right: 50px;
+}
+
+/* Search input box */
+.search-bar {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Dropdown for search results */
+.dropdown {
+  list-style-type: none;
+  padding: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  position: absolute;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+/* Dropdown item styling */
+.dropdown-item {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.dropdown-item:hover {
+  background-color: #f2f2f2;
+}
+
+/* Make table rows clickable */
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.clickable-row:hover {
+  background-color: #f2f2f2;
+}
+
+/* Conversion Box Styling */
+.conversion-box {
+  display: flex;
+  flex-direction: column;
+  margin-top: 210px;
+  margin-right: 50px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: 320px;
+  height:220px;
+  text-align: center;
+  align-items: flex-start;;
+  font-size: 16px;
+  background-color: #fff;
+  gap: 5px;
+}
+
+.conversion-box label {
+  font-weight: bold;
+}
+
+.input-row {
+  display: flex;
+  align-items: center; /* Keep input and "=" aligned */
+  gap: 10px; /* Space between elements */
+}
+
+h3 {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-bottom: 10px; /* Space below the heading */
+}
+
+/* Add space between the two input rows */
+.input-row:first-child {
+  margin-bottom: 10px; /* Adjust this value to control spacing */
+}
+
+.equal-row {
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  margin: 5px 0; /* Adjust the space around the equals sign */
+}
+
+.amount-inputs {
+  width: 120px;
+  margin: 0 10px;
+  padding: 5px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+  justify-content: center; /* Centers the button */
+  width: 100%;
+}
+
+.transfer-button {
+  background-color: #4CAF50; /* Green background color */
+  color: white; /* White text color */
+  padding: 10px 15px; /* Padding for the button */
+  border: none; /* Removes default border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+.withdraw-button {
+  background-color: #d9534f; /* Green background color */
+  color: white; /* White text color */
+  padding: 10px 15px; /* Padding for the button */
+  border: none; /* Removes default border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+.transfer-button:hover {
+  background-color: #45a049; /* Slightly darker green on hover */
+}
+
+.back-to-home-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px; /* Adds space between the conversion box and the back button */
+}
+
+.back-to-home-button {
+  background-color: #3b3b3b; /* Blue background color */
+  color: white; /* White text color */
+  padding: 10px 120px; /* Padding for the button */
+  border: none; /* Removes default border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-size: 1rem;
+  margin-right: 50px;
+  white-space: nowrap; /* Prevents text from wrapping */
+  overflow: hidden; /* Ensures no text overflow */
+}
+
+.back-to-home-button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Transfer page*/
+.home-content5 {
+  display: flex;
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center; 
+  width: 100%;
+  max-width: 900px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.home-content5 h2{
+  margin-top: 10px;  /* Adjust the value to your desired position */
+  margin-bottom: 30px;
+}
+
+.input-container1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input-box1 {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.input-box1 span {
+  margin-right: 10px;
+}
+
+.amount-display1 {
+  margin-left: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333; /* Adjust the color as necessary */
+}
+
+.confirm-button2 {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #4CAF50; /* Customize as needed */
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.confirm-button2:hover {
+  background-color: #45a049;
+}
+
+.go-back-button4 {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #f44336; /* Red button for "Go Back" */
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.go-back-button4:hover {
+  background-color: #e53935;
+}
+
+.error1 {
+  color: red;
+  font-size: 14px;
 }
