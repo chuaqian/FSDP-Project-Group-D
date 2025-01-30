@@ -15,6 +15,7 @@ import Withdraw from './Withdraw';
 import MoreServices from './MoreServices';
 import Investments from './investments';
 import LiquidateInvestment from './LiquidateInvestment';
+import FaceIDLogin from './FaceIDLogin';
 
 createRoot(document.getElementById('root')!).render(
     <Router>
@@ -32,7 +33,7 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/MoreServices" element={<MoreServices />} /> 
         <Route path="/investments" element={<Investments />} />
         <Route path="/LiquidateInvestment" element={<LiquidateInvestment />} />
-        
+        <Route path="/FaceIDLogin" element={<FaceIDLogin />} />
       </Routes>
     </Router>
 );

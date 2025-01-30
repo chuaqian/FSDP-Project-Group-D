@@ -33,6 +33,9 @@ const LandingPage: React.FC = () => {
         <button onClick={() => navigate("/QRScanner")} className="action-button">
           Login with QR-Code
         </button>
+        <button onClick={() => navigate("/FaceIDLogin")} className="action-button">
+          Login with Face ID
+        </button>
       </div>
     </div>
   );

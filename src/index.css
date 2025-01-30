@@ -48,9 +48,9 @@ body {
 }
 
 .logout-button {
-  position: fixed;
-  top: 30px;
-  right: 50px;
+  position: absolute; /* Change from fixed to absolute */
+  top: 20px; /* Adjust spacing */
+  right: 20px;
   height: auto;
   z-index: 1000;
   background-color: #d9534f;
@@ -61,11 +61,15 @@ body {
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.3s ease;
+  display: inline-block; /* Prevent it from stretching */
+  width: auto; /* Prevent full width */
+  text-align: center;
 }
 
 .logout-button:hover {
   background-color: #c9302c;
 }
+
 
 /* main content area styling */
 .home-container {
@@ -1134,3 +1138,122 @@ button:hover {
 }
 
 
+/* General Page Styling */
+.faceid-login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  background-color: #f8f9fa; /* Light grey background */
+  font-family: Arial, sans-serif;
+}
+
+/* Header Styling */
+.faceid-login-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Ensures items are properly spaced */
+  padding: 15px 30px;
+  background-color: #ffffff; /* White header */
+  box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100px;
+  z-index: 1000;
+}
+
+/* OCBC Logo */
+.ocbc-logo {
+  height: 40px;
+  margin-bottom: 40px;
+}
+
+/* Exit Button - Now properly aligned */
+.exit-button {
+  position: absolute;
+  right: 20px;
+  background-color: #d9534f; /* Red color */
+  color: white;
+  border: none;
+  padding: 10px 40px; /* Make the button smaller */
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  width: auto;
+  transition: background-color 0.3s ease;
+  border-radius: 5px;
+}
+
+.exit-button:hover {
+  background-color: #c9302c;
+}
+
+
+
+/* Main Content (Fixing Centering) */
+.faceid-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  height: 100vh; /* Center vertically */
+  margin-top: 80px; /* Just enough to avoid the header */
+  text-align: center;
+}
+
+/* Face ID Title & Text */
+.faceid-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.faceid-subtext {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* Start Face Scan Button */
+.start-scan-button {
+  width: 80%;
+  max-width: 300px;
+  padding: 12px;
+  background-color: #007bff; /* Bootstrap Blue */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.start-scan-button:hover {
+  background-color: #0056b3; /* Darker blue */
+}
+
+/* Fix Floating Red Button */
+.floating-action-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.floating-action-button:hover {
+  transform: scale(1.1);
+}
