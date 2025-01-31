@@ -88,6 +88,13 @@ const MoreServices: React.FC = () => {
                   >
                     Currency Exchange
                 </div>
+                <div 
+                className="serviceBox"
+                onClick={() => handleTextClick('Denomination')}
+                onDoubleClick={() => console.log('Denomination withdrawl')}
+                  >
+                    Denomination
+                </div>
             </div>
 
             {/* Back Button */}
@@ -99,6 +106,7 @@ const MoreServices: React.FC = () => {
               Back to Home
             </button>
       </div>
+      
     </div>
   );
 };

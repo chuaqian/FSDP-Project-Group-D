@@ -19,6 +19,9 @@ import FaceIDLogin from './FaceIDLogin';
 import CurrencyExchange from './CurrencyExchange';
 import Transfer from './Transfer';
 import TransferSuccess from './TransferSuccess';
+import DenominationWithdraw from './DenominationWithdraw';
+import DispensingConfirmation from './DispensingConfirmation';
+
 
 createRoot(document.getElementById('root')!).render(
     <Router>
@@ -40,6 +43,8 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/CurrencyExchange" element={<CurrencyExchange />} />
         <Route path="/transfer" element={<Transfer />} />
         <Route path="/transfersuccess" element={<TransferSuccess />} />
+        <Route path="/DenominationWithdraw" element={<DenominationWithdraw />} />
+        <Route path="/dispensing-confirmation" element={<DispensingConfirmation />} />
       </Routes>
     </Router>
 );
