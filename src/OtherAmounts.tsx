@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import OCBCLogo from './images/OCBC-Logo.png';
-import { addDoc, collection, Timestamp, doc, getDocs } from 'firebase/firestore';
+import { addDoc, collection, Timestamp, doc, getDocs, query, where } from 'firebase/firestore';
 import { db } from './firebaseConfig';
 
 interface LocationState {
@@ -13,11 +13,12 @@ const OtherAmounts: React.FC = () => {
   const [theme, setTheme] = useState('light');
   const [amount, setAmount] = useState('0.00');
   const [loading, setLoading] = useState(true);
+  const [textToSpeech, setTextToSpeech] = useState(false);
+  const [unusualActivity, setUnusualActivity] = useState(false); // To track unusual activity
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as LocationState;
   const userID = state?.userID;
-  const [textToSpeech, setTextToSpeech] = useState(false);
 
   useEffect(() => {
     const savedTheme = state?.theme || localStorage.getItem('theme') || 'light';
@@ -30,6 +31,7 @@ const OtherAmounts: React.FC = () => {
     } else {
       setLoading(false);
       fetchPreferences(userID); // Fetch preferences with user ID
+      checkUnusualActivity(userID); // Check for unusual activity
     }
   }, [userID, navigate, state?.theme]);
 
@@ -43,6 +45,27 @@ const OtherAmounts: React.FC = () => {
         setTextToSpeech(data.textToSpeech || false);
       }
     });
+  };
+
+  // Fetch and check for unusual activity (more than 10 transactions per day)
+  const checkUnusualActivity = async (userID: string) => {
+    const userDocRef = doc(db, 'users', userID);
+    const transactionsRef = collection(userDocRef, 'transactions');
+
+    // Query for today's transactions
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const q = query(transactionsRef, where('timestamp', '>=', startOfDay), where('timestamp', '<=', endOfDay));
+
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.size > 10) {
+      setUnusualActivity(true); // Set the flag for unusual activity
+    } else {
+      setUnusualActivity(false); // No unusual activity
+    }
   };
 
   const speak = (text: string) => {
@@ -74,6 +97,12 @@ const OtherAmounts: React.FC = () => {
       return;
     }
 
+    // If unusual activity is detected, show a warning message and prevent the transaction
+    if (unusualActivity) {
+      alert("Unusual activity detected: More than 10 withdrawals today.");
+      return;
+    }
+
     try {
       const userDocRef = doc(db, 'users', userID);
       const transactionsRef = collection(userDocRef, 'transactions');
@@ -97,6 +126,13 @@ const OtherAmounts: React.FC = () => {
     <div className={`home-container ${theme === 'dark' ? 'dark-theme' : 'light-theme'}`}>
       <img src={OCBCLogo} alt="OCBC Logo" className="fixed-logo large-logo" />
       <div className="home-content4">
+      {unusualActivity && (
+        <div className="unusual-activity-message">
+          Unusual Activity Detected: More than 10 withdrawals today!
+        </div>
+      )}
+
+
         <h2
           className={`text-center ${theme === 'dark' ? 'text-white' : 'text-black'}`}
           onClick={() => handleTextClick("Please enter amount in multiples of $10 or $50")}
