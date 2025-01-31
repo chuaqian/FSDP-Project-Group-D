@@ -60,6 +60,11 @@ const MoreServices: React.FC = () => {
       navigate('/CurrencyExchange', { state: { userID, theme } });
     }
   }
+  const handleNavigateDeno = (page: string) => {
+    if (page === 'DenominationWithdraw') {
+      navigate('/DenominationWithdraw', { state: { userID, theme } });
+    }
+  }
   
   // Back button handler
   const handleBackClick = () => {
@@ -91,7 +96,7 @@ const MoreServices: React.FC = () => {
                 <div 
                 className="serviceBox"
                 onClick={() => handleTextClick('Denomination')}
-                onDoubleClick={() => console.log('Denomination withdrawl')}
+                onDoubleClick={() => handleNavigateDeno('DenominationWithdraw')}
                   >
                     Denomination
                 </div>
