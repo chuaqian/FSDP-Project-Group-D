@@ -6,8 +6,8 @@ import ocbcimg from "./images/OCBC-Logo.png";
 import faceIO from "@faceio/fiojs";
 
 const FaceIDLogin: React.FC = () => {
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
+  const [_loading, setLoading] = useState(false);
+  const [_message, setMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const faceioInstance = useRef<any>(null);
