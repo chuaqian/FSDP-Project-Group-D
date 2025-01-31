@@ -203,7 +203,7 @@ const CurrencyExchange: React.FC = () => {
     const withdrawalCount = await checkWithdrawLimit();
   
     if (withdrawalCount >= 10) {
-      alert("Unable to withdraw. You have exceeded the 10 withdrawals per day limit.");
+      alert("Unusual activity detected: More than 10 withdrawals today.");
       return;
     }
   
