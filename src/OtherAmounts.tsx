@@ -96,27 +96,28 @@ const OtherAmounts: React.FC = () => {
       console.error('No user ID found. Cannot save transaction.');
       return;
     }
-
+  
     // If unusual activity is detected, show a warning message and prevent the transaction
     if (unusualActivity) {
       alert("Unusual activity detected: More than 10 withdrawals today.");
       return;
     }
-
+  
     try {
       const userDocRef = doc(db, 'users', userID);
       const transactionsRef = collection(userDocRef, 'transactions');
-
+  
       await addDoc(transactionsRef, {
         amount: parseFloat(amount),
         timestamp: Timestamp.now(),
       });
-
-      navigate('/withdraw', { state: { userID, theme } });
+  
+      // Pass the withdrawal amount to the Withdraw page
+      navigate('/withdraw', { state: { userID, theme, amount } });
     } catch (error) {
       console.error('Error saving transaction:', error);
     }
-  };
+  };  
 
   if (loading) {
     return <div>Loading...</div>;

@@ -1477,7 +1477,7 @@ h3 {
   margin-top: 10px;
 }
 
-.withdraw-button {
+.withdraw-button1 {
   background-color: #d9534f; /* Green background color */
   color: white; /* White text color */
   padding: 10px 15px; /* Padding for the button */
@@ -1792,4 +1792,5 @@ h3 {
   background-color: red;  
   color: white !important; 
 }
+
 

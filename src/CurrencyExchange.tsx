@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import OCBCLogo from './images/OCBC-Logo.png';
-import { addDoc, collection, Timestamp, doc, getDocs } from 'firebase/firestore';
+import { addDoc, collection, Timestamp, doc, getDocs, query, where } from 'firebase/firestore';
 import { db } from './firebaseConfig';
 
 // Interface for the response from the currency exchange API
@@ -148,18 +148,64 @@ const CurrencyExchange: React.FC = () => {
     if (textToSpeech) speak(text);
   };
 
+  // Function to check if the user has exceeded the daily withdrawal limit
+  const checkWithdrawLimit = async () => {
+    const transactionsRef = collection(db, 'users', userID, 'transactions');
+
+    // Query to fetch today's transactions
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const q = query(
+      transactionsRef,
+      where("timestamp", ">=", Timestamp.fromDate(startOfDay)),
+      where("timestamp", "<=", Timestamp.fromDate(endOfDay))
+    );
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.size; // Returns the number of transactions today
+  };
+
+  const roundAmount = (amount: number) => {
+    const roundedTo10 = Math.round(amount / 10) * 10;
+    const roundedTo5 = Math.round(amount / 5) * 5;
+    const roundedTo2 = Math.round(amount / 2) * 2;
+    
+    // Select the closest multiple
+    const closestMultiple = Math.min(roundedTo10, roundedTo5, roundedTo2);
+    return closestMultiple;
+  };
+  
   const handleWithdraw = async () => {
     if (!userID) {
       alert("User ID not found.");
       return;
     }
-
+  
     if (sgdAmount <= 0) {
       alert("Please enter a valid amount to withdraw.");
       return;
     }
-
-    const roundedAmount = parseFloat(sgdAmount.toFixed(2)); // Round to 2 decimal places
+  
+    const roundedAmount = roundAmount(sgdAmount);
+  
+    // Show confirmation notification
+    const confirmMessage = `The amount has been rounded to the nearest $2, $5, or $10. The new amount is SGD ${roundedAmount}. Do you want to proceed?`;
+    
+    const proceed = window.confirm(confirmMessage);
+  
+    if (!proceed) {
+      return; // User canceled, do nothing
+    }
+  
+    const withdrawalCount = await checkWithdrawLimit();
+  
+    if (withdrawalCount >= 10) {
+      alert("Unable to withdraw. You have exceeded the 10 withdrawals per day limit.");
+      return;
+    }
   
     try {
       await addDoc(collection(db, "users", userID, "transactions"), {
@@ -167,14 +213,14 @@ const CurrencyExchange: React.FC = () => {
         currency: "SGD",
         timestamp: Timestamp.now()
       });
-
+  
       console.log("Transaction stored successfully!");
-      navigate('/Withdraw', { state: { userID, theme, withdrawnAmount: roundedAmount } });
+      navigate('/Withdraw2', { state: { userID, theme, withdrawnAmount: roundedAmount } });
     } catch (error) {
       console.error("Error saving transaction:", error);
       alert("Error processing withdrawal. Please try again.");
     }
-  };
+  };  
 
   if (loading) return <p>Loading exchange rates...</p>;
   if (error) return <p>{error}</p>;
@@ -230,7 +276,7 @@ const CurrencyExchange: React.FC = () => {
               )}
             </div>
 
-            {/* Conversion Box (Now directly below the search bar) */}
+            {/* Conversion Box (Directly below the search bar) */}
             <div className="conversion-box">
               <h3>Conversion Rate</h3>
               {/* First row: SGD$ input box */}
@@ -264,7 +310,7 @@ const CurrencyExchange: React.FC = () => {
 
               {/* Transfer Button */}
               <div className="button-container">
-                <button onClick={handleWithdraw} className="withdraw-button">
+                <button onClick={handleWithdraw} className="withdraw-button1">
                   Withdraw
                 </button>
                 <button onClick={handleTransfer} className="transfer-button">

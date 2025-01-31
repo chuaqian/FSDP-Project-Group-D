@@ -6,14 +6,15 @@ import { db, collection, getDocs } from './firebaseConfig';
 interface LocationState {
   userID: string;
   theme?: string;
+  withdrawnAmount?: number;
 }
 
 const Withdraw: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const state = location.state as LocationState & { amount: string };
+  const state = location.state as LocationState;
   const userID = state?.userID;
-  const amount = state?.amount || '0.00'; // Default to '0.00' if not provided
+  const withdrawnAmount = state?.withdrawnAmount; 
   const [theme, setTheme] = useState('light');
   const [textToSpeech, setTextToSpeech] = useState(false);
 
@@ -66,9 +67,9 @@ const Withdraw: React.FC = () => {
         </h2>
         <p
           className={`withdraw-message ${theme === 'dark' ? 'text-white' : 'text-black'}`}
-          onClick={() => handleTextClick("Your withdrawal of $" + amount + " has been successfully processed.")}
+          onClick={() => handleTextClick(`Your withdrawal of $${withdrawnAmount ? withdrawnAmount : 0} has been successfully processed.`)}
         >
-          Your withdrawal of ${amount} has been successfully processed.
+          Your withdrawal of ${withdrawnAmount ? withdrawnAmount : 0} has been successfully processed.
         </p>
         <button
           onClick={() => handleTextClick("Go Back")}
