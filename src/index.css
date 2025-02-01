@@ -854,7 +854,10 @@ body {
 
 .homeGrid {
   display: flex;
+  flex-wrap: wrap;
   gap: 20px;
+  justify-content: left;
+  padding-left: 50px;
 }
 
 .serviceBox {
@@ -868,7 +871,9 @@ body {
   text-align: center;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  justify-content: left;
+  justify-content: center;
+  width: 360px;
+  height: 100px;
 }
 
 .serviceBox:hover {
@@ -1793,4 +1798,117 @@ h3 {
   color: white !important; 
 }
 
+/* Ticket Container */
+.ticketcontainer {
+  max-width: 800px;
+  width: 100%;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
 
+.eventdetail {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  text-align: left;
+}
+
+.eventdetail h2 {
+  margin-top: 0;
+}
+
+.seemorebutton {
+  display: inline-block;
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.seemorebutton:hover {
+  background-color: #0056b3;
+}
+
+.purchasecontainer {
+  margin-top: 30px;
+  text-align: left;
+}
+
+.ticketselect,
+.ticketinput,
+.emailinput {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.purchasebutton,
+.backbutton,
+.homebutton {
+  display: inline-block;
+  padding: 10px 15px;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.purchasebutton {
+  background-color: #28a745;
+}
+
+.purchasebutton:hover {
+  background-color: #218838;
+}
+
+.backbutton {
+  background-color: #eb2532;
+}
+
+.backbutton:hover {
+  background-color: #b91c1c;
+}
+
+.homebutton {
+  background-color: #007bff;
+}
+
+.homebutton:hover {
+  background-color: #0056b3;
+}
+
+.error {
+  color: red;
+  margin-bottom: 10px;
+}
+
+/* Thank You Container */
+.thankyoucontainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f4f4f4;
+}
+
+.thankyoucontent {
+  max-width: 800px;
+  width: 100%;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.thankyoucontent h1 {
+  color: #28a745;
+}

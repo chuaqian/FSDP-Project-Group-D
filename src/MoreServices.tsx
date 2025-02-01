@@ -65,6 +65,11 @@ const MoreServices: React.FC = () => {
       navigate('/DenominationWithdraw', { state: { userID, theme } });
     }
   }
+  const handleNavigateTick = (page: string) => {
+    if (page === 'Ticket') {
+      navigate('/Ticket', { state: { userID, theme } });
+    }
+  }
   
   // Back button handler
   const handleBackClick = () => {
@@ -98,7 +103,14 @@ const MoreServices: React.FC = () => {
                 onClick={() => handleTextClick('Denomination')}
                 onDoubleClick={() => handleNavigateDeno('DenominationWithdraw')}
                   >
-                    Denomination
+                    Denomination Withdraw
+                </div>
+                <div 
+                className="serviceBox"
+                onClick={() => handleTextClick('Ticket')}
+                onDoubleClick={() => handleNavigateTick('Ticket')}
+                  >
+                    Ticket
                 </div>
             </div>
 

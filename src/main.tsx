@@ -22,6 +22,8 @@ import TransferSuccess from './TransferSuccess';
 import DenominationWithdraw from './DenominationWithdraw';
 import DispensingConfirmation from './DispensingConfirmation';
 import Withdraw2 from './Withdraw2';  
+import Ticket from './Ticket';
+import ThankYou from './ThankYou';
 
 
 createRoot(document.getElementById('root')!).render(
@@ -47,6 +49,8 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/DenominationWithdraw" element={<DenominationWithdraw />} />
         <Route path="/dispensing-confirmation" element={<DispensingConfirmation />} />
         <Route path="/withdraw2" element={<Withdraw2 />} />
+        <Route path="/Ticket" element={<Ticket />} />
+        <Route path="/ThankYou" element={<ThankYou />} />
       </Routes>
     </Router>
 );
