@@ -5,8 +5,14 @@ This project showcases P04 group D's ideas for the OCBC atm functionalities
 ## Features
 
 - **QR Code Login**: Allows users to login using a QR code generated from the site: [Bank App](https://log-in-fsdp.vercel.app/)
+- **Facial ID Login**: Allows users to login using their FaceID with enrollment done in the site: [Bank App](https://log-in-fsdp.vercel.app/)
 - **Token-based Authentication**: The QR code only contains a token (without user ID or email), enhancing security.
 - **Firestore User Verification**: The ATM verifies the user’s token by retrieving their details from Firestore.
+- **Chatbot Assistant**: Chatbot assistant that will be able to answer the user's queries relating to banking
+- **Stock Liquidation**: Utilises AlphaVantage API to retrieve the live current prices of stocks and updates
+- **Currency Exchange**: Utilises ExchangeRate API to view real-time exchange rates on the ATM
+- **Denomination**: Provides a withdrawal interface where users can choose their denomination
+- **Ticket Sale**: Displays upcoming/available events
 
 
 ## Technologies Used
@@ -18,6 +24,9 @@ This project showcases P04 group D's ideas for the OCBC atm functionalities
 - **html5-qrcode**: Scans QR codes and retrieves encoded tokens for validation.
 - **Vite**: Module bundler and development environment.
 - **IBM Cloud**: Watson Chatbot for AI chatbot development
+- **FaceIO**: Face ID system for authentication and enrollment of faceID for users
+- **Alpha Vantage API**: Stock price API to get the latest stock prices
+- **ExchangeRate API**: Exchange Rate API to get the latest conversions of currencies
 
 ## Setup
 
