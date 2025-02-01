@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import OCBCLogo from './images/OCBC-Logo.png';
-import { addDoc, collection, Timestamp, doc, getDocs, query, where } from 'firebase/firestore';
+import { addDoc, collection, Timestamp, getDocs, query, where } from 'firebase/firestore';
 import { db } from './firebaseConfig';
 
 // Interface for the response from the currency exchange API

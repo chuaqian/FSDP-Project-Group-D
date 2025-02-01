@@ -15,7 +15,6 @@ interface LocationState {
 const Transfer: React.FC = () => {
   const [accountNumber, setAccountNumber] = useState('');
   const [amount, setAmount] = useState('');
-  const [currency, setCurrency] = useState('SGD');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -24,8 +23,6 @@ const Transfer: React.FC = () => {
   const userID = state?.userID;
   const theme = state?.theme || 'light';
   const sgdAmount = state?.sgdAmount || 0;  // Retrieve the passed SGD amount
-  const selectedCurrency = state?.selectedCurrency || 'SGD';  // Retrieve the selected currency
-  const exchangeRate = state?.exchangeRate || 1;  // Retrieve the exchange rate to SGD
 
   useEffect(() => {
     if (!userID) {
