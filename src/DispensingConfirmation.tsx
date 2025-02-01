@@ -5,7 +5,7 @@ const DispensingConfirmation: React.FC = () => {
   const navigate = useNavigate();
 
   const handleBackToHome = () => {
-    navigate('/Home'); // Navigate back to the Home page
+    navigate('/Home');
   };
 
   return (

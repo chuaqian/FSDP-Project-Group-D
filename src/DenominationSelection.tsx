@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation} from 'react-router-dom';
 import OCBCLogo from './images/OCBC-Logo.png';
-import { db, collection, getDocs } from './firebaseConfig';
 
-// Import images for each note
 import TwoDollarImage from './images/2note.png';
 import FiveDollarImage from './images/5note.png';
 import TenDollarImage from './images/10note.png';
@@ -11,17 +9,15 @@ import FiftyDollarImage from './images/50note.png';
 import HundredDollarImage from './images/100note.png';
 import ThousandDollarImage from './images/1000note.png';
 
-// Import the DispensingConfirmation component
-import DispensingConfirmation from './DispensingConfirmation'; // Adjust the path if necessary
+import DispensingConfirmation from './DispensingConfirmation';
 
 interface LocationState {
-  userID: string;
   theme?: string;
 }
 
 interface DenominationSelectionProps {
   amount: number;
-  onBack: () => void; // Only onBack prop is needed
+  onBack: () => void;
 }
 
 const DenominationSelection: React.FC<DenominationSelectionProps> = ({ amount, onBack }) => {
@@ -36,7 +32,7 @@ const DenominationSelection: React.FC<DenominationSelectionProps> = ({ amount, o
 
   const [total, setTotal] = useState<number>(0);
   const [error, setError] = useState<string>('');
-  const [showConfirmation, setShowConfirmation] = useState<boolean>(false); // State for confirmation page
+  const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
 
   useEffect(() => {
     const calculatedTotal = Object.entries(denominations).reduce((acc, [key, value]) => {
@@ -55,53 +51,16 @@ const DenominationSelection: React.FC<DenominationSelectionProps> = ({ amount, o
   const handleSubmit = () => {
     if (total === amount) {
       setError('');
-      setShowConfirmation(true); // Show confirmation page
+      setShowConfirmation(true);
     } else {
       setError(`Total must be exactly $${amount}. Current total: $${total}`);
     }
   };
 
-  const [textToSpeech, setTextToSpeech] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
   const state = location.state as LocationState;
-  const userID = state?.userID;
   const theme = state?.theme;
 
-  // Fetch user preferences for TTS 
-  useEffect(() => {
-    const fetchPreferences = async () => {
-      if (userID) {
-        const preferencesRef = collection(db, "preferences");
-        const querySnapshot = await getDocs(preferencesRef);
-        querySnapshot.forEach((doc) => {
-          if (doc.id === userID) {
-            const data = doc.data();
-            setTextToSpeech(data.textToSpeech || false); // Set TTS preference
-          }
-        });
-      }
-    };
-
-    fetchPreferences();
-  }, [userID]);
-
-  // Text-to-speech function 
-  const speak = (text: string) => {
-    if (textToSpeech && 'speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(utterance);
-    }
-  };
-
-  // Text click handler
-  const handleTextClick = (text: string) => {
-    if (textToSpeech) speak(text); // Call speak function for TTS
-    console.log(text); // Log the clicked text
-  };
-
-  // If confirmation page should be shown, render the confirmation component
   if (showConfirmation) {
     return (
       <DispensingConfirmation />
