@@ -241,6 +241,7 @@ const Investments: React.FC = () => {
           </button>
         )}
       </div>
+      <button onClick={() => navigate("/home", { state: { userID, theme } })} className="back-invest-button"> Back </button>
 
       {/* Investment cards */}
       {investments.length > 0 ? (

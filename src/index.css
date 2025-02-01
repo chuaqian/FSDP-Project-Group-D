@@ -1021,10 +1021,31 @@ button:hover {
   z-index: 1000; /* Ensure it's above other elements */
   width: auto; /* Override global button width */
   transition: background-color 0.3s ease;
+  margin-top: 50px;
 }
 
 .add-stock-button:hover {
   background-color: #3d3e3e;
+}
+.back-invest-button {
+  position: fixed; /* Fix it at the top-right corner */
+  top: 20px;
+  right: 20px;
+  background-color: #fc0000;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  z-index: 1000; /* Ensure it's above other elements */
+  width: auto; /* Override global button width */
+  transition: background-color 0.3s ease;
+}
+
+.back-invest-button:hover {
+  background-color: #910101;
 }
 .liquidate-container {
   text-align: center;
